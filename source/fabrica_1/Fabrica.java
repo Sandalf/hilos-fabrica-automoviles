@@ -5,63 +5,58 @@ import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 @SuppressWarnings("serial")
 public class Fabrica extends JFrame {
-	
+
 	Graphics graphics;
 	Image imageBuffer;
 
 	public Fabrica() {
 		CrearInterfaz();
 	}
-	
+
 	public void CrearInterfaz() {
-		setSize(300,100);
-		setLayout(new GridLayout(0,6));
+		setSize(600,100);
+		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 		imageBuffer = createImage(getWidth(),getHeight());
 		graphics = imageBuffer.getGraphics();
-		
+
 		crearFilas();
 	}
-	
+
 	public void paint(Graphics g) {
 		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
 	}
-	
-	public void pintarFila(Fila fila) {
+
+	public void pintarFila(Fila fila) throws IOException {
 		int x = 0;
 		int y = 0;
-		
+
 		for(ImageIcon image : fila.getImagenes()) {
-			BufferedImage bi = new BufferedImage(
-					image.getIconWidth(),
-					image.getIconHeight(),
-				    BufferedImage.TYPE_INT_RGB);
-			System.out.println(image.getIconWidth() + ", " +
-					image.getIconHeight());
-			x += 100;
-			System.out.println(bi.getWidth() + ", " + bi.getHeight());
+			BufferedImage bi = (BufferedImage) image.getImage();
 			graphics.drawImage(bi, x, y, null);
-			break;
+			image.paintIcon(null, graphics, x, y);
+			x += 100;
 		}
-		
+
 		repaint();
 	}
-	
+
 	public void crearFilas() {
 		try {
 			Fila fila = new Fila();
 			pintarFila(fila);
+			fila.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 }
