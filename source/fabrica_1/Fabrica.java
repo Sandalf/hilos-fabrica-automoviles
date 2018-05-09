@@ -19,8 +19,8 @@ public class Fabrica extends JFrame {
 	}
 
 	public void CrearInterfaz() {
-		setSize(300,100);
-		setLayout(new GridLayout(0,6));
+		setSize(600,100);
+		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -44,7 +44,6 @@ public class Fabrica extends JFrame {
 			graphics.drawImage(bi, x, y, null);
 			image.paintIcon(null, graphics, x, y);
 			x += 100;
-			break;
 		}
 
 		repaint();
@@ -54,6 +53,7 @@ public class Fabrica extends JFrame {
 		try {
 			Fila fila = new Fila();
 			pintarFila(fila);
+			fila.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
