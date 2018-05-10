@@ -10,9 +10,19 @@ import javax.swing.ImageIcon;
 public class Fila {
 	
 	private ImageIcon[] imagenes; 
+	private Image [] imgCarro;
+	private String [] NomImg ={"chasis.png","chMotor.png","chTransmision.png","chMoTrans.png","completo.png","carrocompleto.png"};
 	
 	public Fila() throws IOException {
 		imagenes = inicializarImagenes();
+	}
+	
+	public Image[] inicializarImagenesCarro(Image[] imgCarro) throws IOException {
+		imgCarro = new Image[6];
+		for(int i = 0 ; i < imgCarro.length ; i++){
+			imgCarro[i] = Rutinas.AjustarImagen(NomImg[i],50,60).getImage();
+		}
+		return imgCarro;
 	}
 	
 	public ImageIcon[] inicializarImagenes() throws IOException {
