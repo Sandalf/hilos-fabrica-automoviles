@@ -44,24 +44,9 @@ public class Fabrica extends JFrame implements ActionListener {
 		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
 	}
 
-	public void pintarFila(Fila fila) throws IOException {
-		int x = 0;
-		int y = 0;
-
-		for(ImageIcon image : fila.getImagenes()) {
-			BufferedImage bi = (BufferedImage) image.getImage();
-			graphics.drawImage(bi, x, y, null);
-			image.paintIcon(null, graphics, x, y);
-			x += 100;
-		}
-
-		repaint();
-	}
-
 	public void crearFilas() {
 		try {
 			Fila fila = new Fila(graphics);
-			pintarFila(fila);
 			fila.start();
 		} catch (IOException e) {
 			e.printStackTrace();
