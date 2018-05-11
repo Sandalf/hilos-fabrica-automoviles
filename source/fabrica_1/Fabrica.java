@@ -13,6 +13,7 @@ public class Fabrica extends JFrame {
 
 	Graphics graphics;
 	Image imageBuffer;
+	Image [] img;
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -29,10 +30,14 @@ public class Fabrica extends JFrame {
 		graphics = imageBuffer.getGraphics();
 
 		crearFilas();
+		
+		
 	}
 
 	public void paint(Graphics g) {
 		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
+		for(int i = 0 ; i < img.length ; i++)
+		g.drawImage(img[i],0,310,50,30,this);
 	}
 
 	public void pintarFila(Fila fila) throws IOException {
@@ -53,7 +58,7 @@ public class Fabrica extends JFrame {
 		try {
 			Fila fila = new Fila();
 			pintarFila(fila);
-			fila.start();
+			fila.inicializarImagenesCarro(img);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
