@@ -3,13 +3,16 @@ package fabrica_1;
 import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.Timer;
 
 @SuppressWarnings("serial")
-public class Fabrica extends JFrame {
+public class Fabrica extends JFrame implements ActionListener {
 
 	Graphics graphics;
 	Image imageBuffer;
@@ -29,15 +32,16 @@ public class Fabrica extends JFrame {
 		imageBuffer = createImage(getWidth(),getHeight());
 		graphics = imageBuffer.getGraphics();
 
-		crearFilas();
+		crearFilas();	
 		
-		
+		Timer t = new Timer(1, this);
+        t.setRepeats(true);
+        t.setInitialDelay(0);
+        t.start();
 	}
 
 	public void paint(Graphics g) {
 		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
-		for(int i = 0 ; i < img.length ; i++)
-		g.drawImage(img[i],0,310,50,30,this);
 	}
 
 	public void pintarFila(Fila fila) throws IOException {
@@ -56,12 +60,16 @@ public class Fabrica extends JFrame {
 
 	public void crearFilas() {
 		try {
-			Fila fila = new Fila();
+			Fila fila = new Fila(graphics);
 			pintarFila(fila);
-			fila.inicializarImagenesCarro(img);
+			fila.start();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		repaint();
 	}
 
 }
