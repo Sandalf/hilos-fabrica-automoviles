@@ -16,10 +16,15 @@ public class Fabrica extends JFrame implements ActionListener {
 	Image imageBuffer;
 	Image [] img;
 	Fila[] filas;
-	boolean[][] robots = {
-			{false,false},{false,false},{false,false},
-			{false,false},{false,false},{false,false}};
-	private Semaforo[] semaforos;
+	// Estatus Robots:
+	// 0 - no hay robot en estacion
+	// 1 - el robot esta disponible
+	// 2 - el robot esta ocupado
+	int[][] robots = {
+			{1,0},{1,0},{1,0},
+			{1,0},{1,0},{1,0}};
+	Semaforo[] semaforos;
+	int carrosFabricados = 0;
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -35,7 +40,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		imageBuffer = createImage(getWidth(),getHeight());
 		graphics = imageBuffer.getGraphics();
 
-		inicialzarSemaforos();
+		inicializarSemaforos();
 		crearFilas();
 		
 		Timer t = new Timer(1, this);
@@ -68,7 +73,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		repaint();
 	}
 	
-	public void inicialzarSemaforos() {
+	public void inicializarSemaforos() {
 		this.semaforos = new Semaforo[robots.length];
 		for(int i = 0; i < robots.length; i++) {
 			semaforos[i] = new Semaforo(1);
