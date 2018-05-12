@@ -13,13 +13,13 @@ public class Semaforo {
 			System.out.println("En espera");
 			try {
 				wait();
-			} catch( InterruptedException e  ) {}
+			} catch(InterruptedException e) {}
 		}
 		recursos--;
 	}
 
 	public synchronized void libera() {
 		recursos++;
-        notify();
+		notify();
 	}
 }
