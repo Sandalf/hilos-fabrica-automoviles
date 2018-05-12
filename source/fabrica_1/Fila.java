@@ -21,6 +21,7 @@ public class Fila extends Thread {
 	private static boolean[][] robots;
 	private static Semaforo[] semaforos;
 	private boolean estaFabricando = true;
+	private int[] robotsPorEstacion = {1,1,1,1,1,1};
 
 	public Fila(int id, Graphics g, boolean[][] robots, Semaforo[] semaforos) throws IOException {
 		this.graphics = g;
@@ -63,16 +64,23 @@ public class Fila extends Thread {
 	public void run() {
 		try {
 			int estacion = 0;
-			int fila = 0;
 			while(estaFabricando){
 				System.out.println("Estacion " + estacion);
-				graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
-				sleep(100);
-				graphics.drawImage(imagenDefault, estacion*100, filaID*100, null);
+				
+				semaforos[estacion].espera();
+				if(hayRobotsDisponibles(estacion,this.filaID)) {
+					robots[estacion][filaID] = true;
+					graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
+					sleep(100);
+					graphics.drawImage(imagenDefault, estacion*100, filaID*100, null);
+					robots[estacion][filaID] = false;
+				}	
+				semaforos[estacion].libera();
 				
 				if(estacion == 5) {
 					estaFabricando = false;
 				}
+				
 				estacion++;
 			}
 		} catch (InterruptedException e) {
@@ -91,21 +99,19 @@ public class Fila extends Thread {
 	}
 	
 	public boolean hayRobotsDisponibles(int estacion, int fila) {
-		if(estacion == 0) {
-			int robotsOcupados = 0;
-			for(int j = 0; j < robots[0].length; j++) {
-				if(robots[estacion][j]) {
-					robotsOcupados++;
-				}
-			}
-			
-			if(robotsOcupados < 2 && robots[estacion][fila]) {
-				return true;
-			} else {
-				return false;
+		int robotsOcupados = obtenerRobotsOcupadosEnEstacion(estacion);
+		int robotsConfigurados = robotsPorEstacion[estacion];
+		return robotsOcupados < robotsConfigurados ? true: false;		
+	}
+	
+	public int obtenerRobotsOcupadosEnEstacion(int estacion) {
+		int robotsOcupados = 0;
+		for(int j = 0; j < robots[0].length; j++) {
+			if(robots[estacion][j]) {
+				robotsOcupados++;
 			}
 		}
-		return false;		
+		return robotsOcupados;
 	}
 
 }

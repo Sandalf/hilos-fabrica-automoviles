@@ -17,8 +17,8 @@ public class Fabrica extends JFrame implements ActionListener {
 	Image [] img;
 	Fila[] filas;
 	boolean[][] robots = {
-			{false,false},{true,false},{true,false},
-			{false,true},{false,true},{false,true}};
+			{false,false},{false,false},{false,false},
+			{false,false},{false,false},{false,false}};
 	private Semaforo[] semaforos;
 
 	public Fabrica() {
