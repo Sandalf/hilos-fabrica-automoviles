@@ -21,7 +21,8 @@ public class Fila extends Thread {
 	private static boolean[][] robots;
 	private static Semaforo[] semaforos;
 	private boolean estaFabricando = true;
-	private int[] robotsPorEstacion = {1,1,1,1,1,1};
+	private static int[] robotsPorEstacion = {1,1,1,1,1,1};
+	private static int[] segundosPorEstacion = {1,2,1,2,1,2};
 
 	public Fila(int id, Graphics g, boolean[][] robots, Semaforo[] semaforos) throws IOException {
 		this.graphics = g;
@@ -65,13 +66,13 @@ public class Fila extends Thread {
 		try {
 			int estacion = 0;
 			while(estaFabricando){
-				System.out.println("Estacion " + estacion);
+				System.out.println("Estacion: " + estacion + ", Fila: " + filaID);
 				
 				semaforos[estacion].espera();
 				if(hayRobotsDisponibles(estacion,this.filaID)) {
 					robots[estacion][filaID] = true;
 					graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
-					sleep(100);
+					sleep(segundosPorEstacion[estacion]*1000);
 					graphics.drawImage(imagenDefault, estacion*100, filaID*100, null);
 					robots[estacion][filaID] = false;
 				}	
