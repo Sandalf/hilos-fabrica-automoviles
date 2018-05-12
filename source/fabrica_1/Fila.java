@@ -11,15 +11,22 @@ import javax.swing.ImageIcon;
 
 public class Fila extends Thread {
 
+	private int filaID;
 	private BufferedImage imagenDefault;
 	private BufferedImage[] etapasCarro;
 	private int carrosFabricados = 0;
 	private String[] nomImg = { "chasis.png", "chMotor.png", "chTransmision.png", "chMoTrans.png", "completo.png",
 			"carrocompleto.png" };
 	private Graphics graphics;
+	private static boolean[][] robots;
+	private static Semaforo[] semaforos;
+	private boolean estaFabricando = true;
 
-	public Fila(Graphics g) throws IOException {
+	public Fila(int id, Graphics g, boolean[][] robots, Semaforo[] semaforos) throws IOException {
 		this.graphics = g;
+		this.filaID = id;
+		this.robots = robots;
+		this.semaforos = semaforos;
 		imagenDefault = inicializarImagenDefault();
 		etapasCarro = inicializarEtapasCarro();
 		pintarFila();
@@ -55,38 +62,19 @@ public class Fila extends Thread {
 
 	public void run() {
 		try {
-			System.out.println("Estacion 1");
-			System.out.println("Preparando chasis y cableado");
-			graphics.drawImage(etapasCarro[0], 0, 0, null);
-			sleep(100);
-			graphics.drawImage(imagenDefault, 0, 0, null);
-			System.out.println("Estacion 2");
-			System.out.println("Preparando motor y transmision");
-			graphics.drawImage(etapasCarro[1], 100, 0, null);
-			sleep(100);
-			graphics.drawImage(imagenDefault, 100, 0, null);
-			System.out.println("Estacion 3");
-			System.out.println("Preparando carroceria");
-			graphics.drawImage(etapasCarro[2], 200, 0, null);
-			sleep(100);
-			graphics.drawImage(imagenDefault, 200, 0, null);
-			System.out.println("Estacion 4");
-			System.out.println("Preparando interiores");
-			graphics.drawImage(etapasCarro[3], 300, 0, null);
-			sleep(100);
-			graphics.drawImage(imagenDefault, 300, 0, null);
-			System.out.println("Estacion 5");
-			System.out.println("Preparando llantas");
-			graphics.drawImage(etapasCarro[4], 400, 0, null);
-			sleep(100);
-			graphics.drawImage(imagenDefault, 400, 0, null);
-			System.out.println("Estacion 6");
-			System.out.println("Realizando pruebas");
-			graphics.drawImage(etapasCarro[5], 500, 0, null);
-			sleep(100);
-			carrosFabricados++;
-			System.out.println("Listo!!");
-			System.out.println("Carros fabricados: " + carrosFabricados);
+			int estacion = 0;
+			int fila = 0;
+			while(estaFabricando){
+				System.out.println("Estacion " + estacion);
+				graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
+				sleep(100);
+				graphics.drawImage(imagenDefault, estacion*100, filaID*100, null);
+				
+				if(estacion == 5) {
+					estaFabricando = false;
+				}
+				estacion++;
+			}
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -100,6 +88,24 @@ public class Fila extends Thread {
 			graphics.drawImage(imagenDefault, x, y, null);
 			x += 100;
 		}
+	}
+	
+	public boolean hayRobotsDisponibles(int estacion, int fila) {
+		if(estacion == 0) {
+			int robotsOcupados = 0;
+			for(int j = 0; j < robots[0].length; j++) {
+				if(robots[estacion][j]) {
+					robotsOcupados++;
+				}
+			}
+			
+			if(robotsOcupados < 2 && robots[estacion][fila]) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;		
 	}
 
 }

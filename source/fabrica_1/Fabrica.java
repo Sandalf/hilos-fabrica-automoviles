@@ -1,13 +1,11 @@
 package fabrica_1;
 
 import java.awt.Graphics;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import javax.swing.ImageIcon;
+
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -17,13 +15,18 @@ public class Fabrica extends JFrame implements ActionListener {
 	Graphics graphics;
 	Image imageBuffer;
 	Image [] img;
+	Fila[] filas;
+	boolean[][] robots = {
+			{false,false},{true,false},{true,false},
+			{false,true},{false,true},{false,true}};
+	private Semaforo[] semaforos;
 
 	public Fabrica() {
 		CrearInterfaz();
 	}
 
 	public void CrearInterfaz() {
-		setSize(600,100);
+		setSize(600,200);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -32,7 +35,8 @@ public class Fabrica extends JFrame implements ActionListener {
 		imageBuffer = createImage(getWidth(),getHeight());
 		graphics = imageBuffer.getGraphics();
 
-		crearFilas();	
+		inicialzarSemaforos();
+		crearFilas();
 		
 		Timer t = new Timer(1, this);
         t.setRepeats(true);
@@ -46,8 +50,15 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void crearFilas() {
 		try {
-			Fila fila = new Fila(graphics);
-			fila.start();
+			filas = new Fila[2];
+			
+			for(int i = 0; i < filas.length; i++) {
+				filas[i] = new Fila(i,graphics,robots,semaforos);
+			}
+			
+			for(int i = 0; i < filas.length; i++) {
+				filas[i].start();
+			}	
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -55,6 +66,13 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		repaint();
+	}
+	
+	public void inicialzarSemaforos() {
+		this.semaforos = new Semaforo[robots.length];
+		for(int i = 0; i < robots.length; i++) {
+			semaforos[i] = new Semaforo(1);
+		}
 	}
 
 }
