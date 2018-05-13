@@ -6,12 +6,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
 
-import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
+@SuppressWarnings("serial")
 public class Carrera extends JFrame implements ActionListener {
 	
 	Graphics graphics;
@@ -36,6 +35,7 @@ public class Carrera extends JFrame implements ActionListener {
 		graphics = imageBuffer.getGraphics();
 		
 		pintarPista();
+		crearCorredores();
 		
 		Timer t = new Timer(1, this);
         t.setRepeats(true);
@@ -47,15 +47,10 @@ public class Carrera extends JFrame implements ActionListener {
 		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
 	}
 	
-	public void pintarPista() throws IOException {
-		BufferedImage imagenPista = null;
-		BufferedImage imagenPuente = null;
-		
-		InputStream isPista = this.getClass().getResourceAsStream("./camino.png");
-		InputStream isPuente = this.getClass().getResourceAsStream("./puente.png");
-		
-		imagenPista = (BufferedImage) ImageIO.read(isPista);
-		imagenPuente = (BufferedImage) ImageIO.read(isPuente);
+	public void pintarPista() {
+		Rutinas rutinas = new Rutinas();
+		BufferedImage imagenPista = rutinas.obtenerImagen("./camino.png");
+		BufferedImage imagenPuente = rutinas.obtenerImagen("./puente.png");
 		
 		for(int j = 0; j < 6; j++) {
 			// Dibujar Puente
@@ -70,6 +65,11 @@ public class Carrera extends JFrame implements ActionListener {
 		repaint();
 	}
 
+	public void crearCorredores() {
+		Liebre liebre = new Liebre(1,graphics);
+		liebre.start();
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		repaint();
 	}
