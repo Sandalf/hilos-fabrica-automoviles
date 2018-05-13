@@ -21,8 +21,8 @@ public class Fabrica extends JFrame implements ActionListener {
 	// 1 - el robot esta disponible
 	// 2 - el robot esta ocupado
 	int[][] robots = {
-			{1,0},{1,0},{1,0},
-			{1,0},{1,0},{1,0}};
+			{1,0,1,0},{1,0,0,0},{1,0,1,0},
+			{1,0,0,0},{1,0,1,1},{1,0,0,0}};
 	Semaforo[] semaforos;
 	int carrosFabricados = 0;
 
@@ -31,7 +31,7 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void CrearInterfaz() {
-		setSize(600,200);
+		setSize(600,robots[0].length*100);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -47,6 +47,18 @@ public class Fabrica extends JFrame implements ActionListener {
         t.setRepeats(true);
         t.setInitialDelay(0);
         t.start();
+        
+        while(filas[0].isAlive() ||
+        		filas[1].isAlive() ||
+        		filas[2].isAlive() ||
+        		filas[3].isAlive());
+        
+        for(int i = 0; i < robots.length; i++) {
+        		for(int j = 0; j < robots[0].length; j++) {
+        			System.out.print(robots[i][j] + " ");
+            }
+        		System.out.println();
+        }
 	}
 
 	public void paint(Graphics g) {
@@ -55,7 +67,7 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void crearFilas() {
 		try {
-			filas = new Fila[2];
+			filas = new Fila[4];
 			
 			for(int i = 0; i < filas.length; i++) {
 				filas[i] = new Fila(i,graphics,robots,semaforos);
