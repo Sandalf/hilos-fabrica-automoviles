@@ -21,7 +21,6 @@ public class Fila extends Thread {
 	private static int[][] robots;
 	private static Semaforo[] semaforos;
 	private boolean estaFabricando = true;
-	private static int[] robotsPorEstacion = {1,1,1,1,1,1};
 	private static int[] segundosPorEstacion = {1,2,1,2,1,2};
 
 	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos) throws IOException {
@@ -127,22 +126,6 @@ public class Fila extends Thread {
 			}
 		}
 		return -1;	
-	}
-
-	public boolean hayRobotsDisponibles(int estacion, int fila) {
-		int robotsOcupados = obtenerRobotsOcupadosEnEstacion(estacion);
-		int robotsConfigurados = robotsPorEstacion[estacion];
-		return robotsOcupados < robotsConfigurados ? true: false;		
-	}
-
-	public int obtenerRobotsOcupadosEnEstacion(int estacion) {
-		int robotsOcupados = 0;
-		for(int j = 0; j < robots[0].length; j++) {
-			if(robots[estacion][j] == 2) {
-				robotsOcupados++;
-			}
-		}
-		return robotsOcupados;
 	}
 
 }
