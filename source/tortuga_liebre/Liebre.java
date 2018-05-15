@@ -1,46 +1,31 @@
 package tortuga_liebre;
 
-import java.awt.image.BufferedImage;
-
 public class Liebre extends Corredor {
-	
-	private BufferedImage imagenCorredor;
+
 	private Rutinas rutinas = new Rutinas();
-	private boolean corriendo = true;
-	private int distanciaRecorrida = 0;
-	private Semaforo[] semaforos;
-	private boolean[] puentes;
 
 	public Liebre(int corredorID, Semaforo[] semaforos, boolean[] puentes) {
-		super(corredorID);	
-		this.imagenCorredor = rutinas.obtenerImagen("./liebre1.png");
-		this.semaforos = semaforos;
-		this.puentes = puentes;
+		super(corredorID, semaforos, puentes);
+		setImagenCorredor(rutinas.obtenerImagen("./liebre1.png"));
 	}
-	
+
 	public void run() {
 		try {
-			while(corriendo) {
+			while(estaCorriendo()) {
 				int pasos = rutinas.nextInt(3,10);
-							
-				if(distanciaRecorrida >= 30 && distanciaRecorrida <= 90) {
-					semaforos[0].espera();
-					if(!puentes[0]) {
-						puentes[0] = true;
-						while(distanciaRecorrida >= 30 && distanciaRecorrida <= 200) {
-							pasos = rutinas.nextInt(3,10);
-							distanciaRecorrida += pasos;
-							sleep(100);	
-						}
-						puentes[0] = false;
+
+				if(enPuente(getDistanciaRecorrida())) {
+					getSemaforos()[0].espera();
+					if(!getPuentes()[0]) {					
+						atravesarPuente(30,200);
 					}
-					semaforos[0].libera();
+					getSemaforos()[0].libera();
 				} else {
-					distanciaRecorrida += pasos;
+					setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
 				}
-				
-				if (distanciaRecorrida >= 500) {
-					corriendo = false;
+
+				if (getDistanciaRecorrida() >= 500) {
+					setCorriendo(false);
 				}				
 				sleep(100);			
 			}
@@ -49,20 +34,18 @@ public class Liebre extends Corredor {
 		}
 	}
 
-	public int getDistanciaRecorrida() {
-		return distanciaRecorrida;
+	public void atravesarPuente(int inicioPuente, int finPuente) {
+		try {
+			getPuentes()[0] = true;
+			while(getDistanciaRecorrida() >= inicioPuente && getDistanciaRecorrida() <= finPuente) {
+				int pasos = rutinas.nextInt(3,10);
+				setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
+				sleep(100);
+			}
+			getPuentes()[0] = false;
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 
-	public void setDistanciaRecorrida(int distanciaRecorrida) {
-		this.distanciaRecorrida = distanciaRecorrida;
-	}
-
-	public BufferedImage getImagenCorredor() {
-		return imagenCorredor;
-	}
-
-	public void setImagenCorredor(BufferedImage imagenCorredor) {
-		this.imagenCorredor = imagenCorredor;
-	}
-	
 }
