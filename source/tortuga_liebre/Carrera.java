@@ -15,7 +15,7 @@ public class Carrera extends JFrame implements ActionListener {
 	
 	Graphics graphics;
 	Image imageBuffer;
-	Liebre[] liebres;
+	Corredor[] corredores;
 	Semaforo[] semaforos;
 	boolean[] puentes = { false, false };
 	
@@ -70,21 +70,25 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 
 	public void crearCorredores() {
-		liebres = new Liebre[2];
+		corredores = new Corredor[2];
 		for(int i = 0; i < 2; i++) {
-			liebres[i] = new Liebre(i, semaforos, puentes);
+			if(i == 0) {
+				corredores[i] = new Liebre(i, semaforos, puentes);
+			} else {
+				corredores[i] = new Tortuga(i, semaforos, puentes);
+			}			
 		}
 		
 		for(int i = 0; i < 2; i++) {
-			liebres[i].start();
+			corredores[i].start();
 		}
 	}
 	
 	public void pintarCorredores() {
 		pintarPista();
-		for(int i = 0; i < liebres.length; i++) {
-			BufferedImage imagenCorredor = liebres[i].getImagenCorredor();
-			int distanciaRecorrida = liebres[i].getDistanciaRecorrida();
+		for(int i = 0; i < corredores.length; i++) {
+			BufferedImage imagenCorredor = corredores[i].getImagenCorredor();
+			int distanciaRecorrida = corredores[i].getDistanciaRecorrida();
 			pintarCorredor(imagenCorredor,distanciaRecorrida);
 		}
 	}
