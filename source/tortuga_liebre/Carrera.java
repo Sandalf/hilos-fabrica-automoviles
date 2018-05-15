@@ -15,6 +15,9 @@ public class Carrera extends JFrame implements ActionListener {
 	
 	Graphics graphics;
 	Image imageBuffer;
+	Corredor[] corredores;
+	Semaforo[] semaforos;
+	boolean[] puentes = { false, false };
 	
 	public Carrera() {
 		try {
@@ -35,6 +38,7 @@ public class Carrera extends JFrame implements ActionListener {
 		graphics = imageBuffer.getGraphics();
 		
 		pintarPista();
+		inicializarSemaforos();
 		crearCorredores();
 		
 		Timer t = new Timer(1, this);
@@ -66,11 +70,42 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 
 	public void crearCorredores() {
-		Liebre liebre = new Liebre(1,graphics);
-		liebre.start();
+		corredores = new Corredor[2];
+		for(int i = 0; i < 2; i++) {
+			if(i == 0) {
+				corredores[i] = new Liebre(i, semaforos, puentes);
+			} else {
+				corredores[i] = new Tortuga(i, semaforos, puentes);
+			}			
+		}
+		
+		for(int i = 0; i < 2; i++) {
+			corredores[i].start();
+		}
+	}
+	
+	public void pintarCorredores() {
+		pintarPista();
+		for(int i = 0; i < corredores.length; i++) {
+			BufferedImage imagenCorredor = corredores[i].getImagenCorredor();
+			int distanciaRecorrida = corredores[i].getDistanciaRecorrida();
+			pintarCorredor(imagenCorredor,distanciaRecorrida);
+		}
+	}
+	
+	public void pintarCorredor(BufferedImage imagen, int distanciaRecorrida) {
+		graphics.drawImage(imagen, distanciaRecorrida, 0, null);
+	}
+	
+	public void inicializarSemaforos() {
+		semaforos = new Semaforo[2];
+		for(int i = 0; i < 2; i++) {
+			semaforos[i] = new Semaforo(1);
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
+		pintarCorredores();
 		repaint();
 	}
 }
