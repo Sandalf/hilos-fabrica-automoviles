@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
+import javax.sound.midi.Synthesizer;
 import javax.swing.ImageIcon;
 
 public class Fila extends Thread {
@@ -22,7 +23,7 @@ public class Fila extends Thread {
 	private static Semaforo[] semaforos;
 	private boolean estaFabricando = true;
 	private static int[] segundosPorEstacion = {1,2,1,2,1,2};
-
+	private int carros = 0;
 	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos) throws IOException {
 		this.graphics = g;
 		this.filaID = id;
@@ -73,11 +74,11 @@ public class Fila extends Thread {
 			int estacion = 0;
 			while(estaFabricando){
 				System.out.println("Estacion: " + estacion + ", Fila: " + filaID);
-
 				semaforos[estacion].espera();
 				int filaRobotDisponible = obtenerFilaRobotDisponible(estacion);
 				if(robots[estacion][filaID] == 1) {
 					robots[estacion][filaID] = 2;
+					graphics.drawImage(imagenDefault, estacion*100, filaID*100, null); 
 					graphics.drawImage(imagenRobot, estacion*100, (filaID*100)+10, null);
 					graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
 					sleep(segundosPorEstacion[estacion]*1000);
@@ -96,26 +97,24 @@ public class Fila extends Thread {
 					robots[estacion][filaID] = 1;
 				}
 				
+				
 				semaforos[estacion].libera();
-
 				if(estacion == 5) {
 					estaFabricando = false;
 				}
-
 				estacion++;
 			}
+			
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
-
+ 
 	public void pintarFila() {
-		int x = 0;
-		int y = 0;
-
-		for(int i = 0; i < 6; i++) {
-			graphics.drawImage(imagenDefault, x, y, null);
-			x += 100;
+		for(int i = 0; i < 4; i++) {
+			for(int j = 0 ; j < 6 ; j++){
+				graphics.drawImage(imagenDefault, j*100, i*100, null);
+			}
 		}
 	}
 	

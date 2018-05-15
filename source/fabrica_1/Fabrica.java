@@ -26,9 +26,9 @@ public class Fabrica extends JFrame implements ActionListener {
 	Semaforo[] semaforos;
 	
 	// TODO:
-	// - Contar carros fabricados
-	// - Pintar cintas desde el inicio
-	// - Pintar robots desde el inicio
+	// - Contar carros fabricados // 
+	// - Pintar cintas desde el inicio //pinto todas la cintas antes de empezar
+	// - Pintar robots desde el inicio //
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -36,6 +36,7 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void CrearInterfaz() {
 		setSize(600,robots[0].length*100);
+		setAlwaysOnTop(true);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
