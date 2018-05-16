@@ -8,8 +8,8 @@ public class Tortuga extends Corredor {
 	public Tortuga(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		super(corredorID, semaforos, puentes);
 		setImagenCorredor(rutinas.obtenerImagen("./tortuga.png"));
-		this.setMinPasos(2);
-		this.setMaxPasos(5);
+		this.setMinPasos(4);
+		this.setMaxPasos(7);
 	}
 
 }

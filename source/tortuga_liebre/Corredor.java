@@ -1,6 +1,7 @@
 package tortuga_liebre;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Corredor extends Thread {
 	
@@ -13,11 +14,16 @@ public class Corredor extends Thread {
 	private int minPasos;
 	private int maxPasos;
 	public Rutinas rutinas = new Rutinas();
+	public static boolean ingresandoGanador = false;
+	private ArrayList<Corredor> ganadores;
+	private Semaforo semGanadores;
 
 	public Corredor(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		this.corredorID = corredorID;
 		this.semaforos = semaforos;
 		this.puentes = puentes;
+//		this.ganadores = ganadores;
+//		this.semGanadores = semGanadores;
 	}
 
 	public int enPuente(int posicion) {
@@ -47,11 +53,7 @@ public class Corredor extends Thread {
 					getSemaforos()[numPuente].libera();
 				} else {
 					setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
-				}
-
-				if (getDistanciaRecorrida() >= 500) {
-					setCorriendo(false);
-				}				
+				}			
 				sleep(100);			
 			}
 		} catch (InterruptedException e) {
@@ -60,10 +62,11 @@ public class Corredor extends Thread {
 	}
 
 	public void atravesarPuente(int numPuente, int inicioPuente, int finPuente) {
+		System.out.println("Inicio: " + inicioPuente + ", Fin: " + finPuente);
 		try {
 			getPuentes()[numPuente].setDisponible(false);
 			while(getDistanciaRecorrida() >= inicioPuente && 
-				getDistanciaRecorrida() <= finPuente) {
+				getDistanciaRecorrida() <= (finPuente+this.getImagenCorredor().getWidth())) {
 				int pasos = rutinas.nextInt(getMinPasos(),getMaxPasos());
 				setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
 				sleep(100);
