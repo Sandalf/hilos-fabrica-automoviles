@@ -4,7 +4,7 @@ public class Liebre extends Corredor {
 
 	private Rutinas rutinas = new Rutinas();
 
-	public Liebre(int corredorID, Semaforo[] semaforos, boolean[] puentes) {
+	public Liebre(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		super(corredorID, semaforos, puentes);
 		setImagenCorredor(rutinas.obtenerImagen("./liebre1.png"));
 	}
@@ -14,12 +14,16 @@ public class Liebre extends Corredor {
 			while(estaCorriendo()) {
 				int pasos = rutinas.nextInt(3,10);
 
-				if(enPuente(getDistanciaRecorrida())) {
-					getSemaforos()[0].espera();
-					if(!getPuentes()[0]) {					
-						atravesarPuente(30,200);
+				int numPuente = enPuente(getDistanciaRecorrida());
+				if(numPuente > -1) {
+					getSemaforos()[numPuente].espera();
+					Puente puente = getPuentes()[numPuente];
+					if(getPuentes()[numPuente].estaDisponible()) {					
+						atravesarPuente(numPuente,
+								puente.getPosicion(),
+								puente.getPosicion()+puente.getAncho());
 					}
-					getSemaforos()[0].libera();
+					getSemaforos()[numPuente].libera();
 				} else {
 					setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
 				}
@@ -34,15 +38,16 @@ public class Liebre extends Corredor {
 		}
 	}
 
-	public void atravesarPuente(int inicioPuente, int finPuente) {
+	public void atravesarPuente(int numPuente, int inicioPuente, int finPuente) {
 		try {
-			getPuentes()[0] = true;
-			while(getDistanciaRecorrida() >= inicioPuente && getDistanciaRecorrida() <= finPuente) {
+			getPuentes()[numPuente].setDisponible(false);
+			while(getDistanciaRecorrida() >= inicioPuente && 
+				getDistanciaRecorrida() <= finPuente) {
 				int pasos = rutinas.nextInt(3,10);
 				setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
 				sleep(100);
 			}
-			getPuentes()[0] = false;
+			getPuentes()[numPuente].setDisponible(true);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

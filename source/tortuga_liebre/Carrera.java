@@ -1,5 +1,6 @@
 package tortuga_liebre;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -17,7 +18,7 @@ public class Carrera extends JFrame implements ActionListener {
 	Image imageBuffer;
 	Corredor[] corredores;
 	Semaforo[] semaforos;
-	boolean[] puentes = { false, false };
+	Puente[]  puentes = { new Puente(100,100), new Puente(300,100) };
 	
 	public Carrera() {
 		try {
@@ -28,7 +29,7 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 	
 	public void CrearInterfaz() throws IOException {
-		setSize(600,122);
+		setSize(630,122);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -54,32 +55,33 @@ public class Carrera extends JFrame implements ActionListener {
 	public void pintarPista() {
 		Rutinas rutinas = new Rutinas();
 		BufferedImage imagenPista = rutinas.obtenerImagen("./camino.png");
-		BufferedImage imagenPuente = rutinas.obtenerImagen("./puente.png");
-		
+		BufferedImage imagenMeta = rutinas.obtenerImagen("./meta.png");
+			
 		for(int j = 0; j < 6; j++) {
-			// Dibujar Puente
-			if (j == 1 ||  j == 3) {
-				graphics.drawImage(imagenPuente, j*100, 22, null);
-			} else {
-				// Dibujar Pista
-				graphics.drawImage(imagenPista, j*100, 22, null);
-			}
+			graphics.drawImage(imagenPista, (j*100)+60, 22, null);
 		}
+		
+		graphics.drawImage(imagenMeta, 0, 22, null);
+		graphics.drawImage(imagenMeta, 30, 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-30, 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-60, 22, null);
+		
+		pintarPuentes();
 		
 		repaint();
 	}
 
 	public void crearCorredores() {
-		corredores = new Corredor[2];
-		for(int i = 0; i < 2; i++) {
-			if(i == 0) {
+		corredores = new Corredor[4];
+		for(int i = 0; i < corredores.length; i++) {
+			if(i % 2 == 0) {
 				corredores[i] = new Liebre(i, semaforos, puentes);
 			} else {
 				corredores[i] = new Tortuga(i, semaforos, puentes);
 			}			
 		}
 		
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < corredores.length; i++) {
 			corredores[i].start();
 		}
 	}
@@ -89,12 +91,12 @@ public class Carrera extends JFrame implements ActionListener {
 		for(int i = 0; i < corredores.length; i++) {
 			BufferedImage imagenCorredor = corredores[i].getImagenCorredor();
 			int distanciaRecorrida = corredores[i].getDistanciaRecorrida();
-			pintarCorredor(imagenCorredor,distanciaRecorrida);
+			pintarCorredor(imagenCorredor,distanciaRecorrida-imagenCorredor.getWidth());
 		}
 	}
 	
 	public void pintarCorredor(BufferedImage imagen, int distanciaRecorrida) {
-		graphics.drawImage(imagen, distanciaRecorrida, 0, null);
+		graphics.drawImage(imagen, distanciaRecorrida, 50, null);
 	}
 	
 	public void inicializarSemaforos() {
@@ -107,5 +109,18 @@ public class Carrera extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		pintarCorredores();
 		repaint();
+	}
+	
+	public void pintarPuentes() {
+		Color colorDefault = graphics.getColor();
+		
+		for(Puente puente : puentes) {
+			graphics.setColor(new Color(153,204,255));
+			graphics.fillRect(puente.getPosicion(), 0, puente.getAncho(), 122);
+			graphics.setColor(new Color(219,219,219));
+			graphics.fillRect(puente.getPosicion(), 50, puente.getAncho(), 48);
+		}
+		
+		graphics.setColor(colorDefault);
 	}
 }

@@ -5,7 +5,7 @@ public class Tortuga extends Corredor {
 	
 	private Rutinas rutinas = new Rutinas();
 
-	public Tortuga(int corredorID, Semaforo[] semaforos, boolean[] puentes) {
+	public Tortuga(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		super(corredorID, semaforos, puentes);
 		setImagenCorredor(rutinas.obtenerImagen("./tortuga.png"));
 	}
@@ -15,12 +15,17 @@ public class Tortuga extends Corredor {
 			while(estaCorriendo()) {
 				int pasos = rutinas.nextInt(2,5);
 
-				if(enPuente(getDistanciaRecorrida())) {
-					getSemaforos()[0].espera();
-					if(!getPuentes()[0]) {					
-						atravesarPuente(30,200);
+				int numPuente = enPuente(getDistanciaRecorrida());
+				if(numPuente > -1) {
+					System.out.println("En Puente: "+numPuente);
+					getSemaforos()[numPuente].espera();
+					Puente puente = getPuentes()[numPuente];
+					if(puente.estaDisponible()) {					
+						atravesarPuente(numPuente,
+								puente.getPosicion(),
+								puente.getPosicion()+puente.getAncho());
 					}
-					getSemaforos()[0].libera();
+					getSemaforos()[numPuente].libera();
 				} else {
 					setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
 				}
@@ -35,15 +40,15 @@ public class Tortuga extends Corredor {
 		}
 	}
 
-	public void atravesarPuente(int inicioPuente, int finPuente) {
+	public void atravesarPuente(int numPuente, int inicioPuente, int finPuente) {
 		try {
-			getPuentes()[0] = true;
+			getPuentes()[numPuente].setDisponible(false);
 			while(getDistanciaRecorrida() >= inicioPuente && getDistanciaRecorrida() <= finPuente) {
-				int pasos = rutinas.nextInt(3,10);
+				int pasos = rutinas.nextInt(2,5);
 				setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
 				sleep(100);
 			}
-			getPuentes()[0] = false;
+			getPuentes()[numPuente].setDisponible(true);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
