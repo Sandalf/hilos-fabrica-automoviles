@@ -3,7 +3,7 @@ package tortuga_liebre;
 public class Puente {
 	private int posicion;
 	private int ancho;
-	private boolean disponible;
+	private boolean disponible = true;
 	
 	public Puente(int posicion, int ancho) {
 		this.posicion = posicion;

@@ -18,7 +18,6 @@ public class Carrera extends JFrame implements ActionListener {
 	Image imageBuffer;
 	Corredor[] corredores;
 	Semaforo[] semaforos;
-	boolean[] puentesOcupados = { false, false };
 	Puente[]  puentes = { new Puente(100,100), new Puente(300,100) };
 	
 	public Carrera() {
@@ -57,12 +56,15 @@ public class Carrera extends JFrame implements ActionListener {
 		Rutinas rutinas = new Rutinas();
 		BufferedImage imagenPista = rutinas.obtenerImagen("./camino.png");
 		BufferedImage imagenMeta = rutinas.obtenerImagen("./meta.png");
-		
+			
 		for(int j = 0; j < 6; j++) {
-			graphics.drawImage(imagenPista, j*100, 22, null);
+			graphics.drawImage(imagenPista, (j*100)+60, 22, null);
 		}
 		
+		graphics.drawImage(imagenMeta, 0, 22, null);
+		graphics.drawImage(imagenMeta, 30, 22, null);
 		graphics.drawImage(imagenMeta, getWidth()-30, 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-60, 22, null);
 		
 		pintarPuentes();
 		
@@ -70,16 +72,16 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 
 	public void crearCorredores() {
-		corredores = new Corredor[2];
-		for(int i = 0; i < 2; i++) {
-			if(i == 0) {
-				corredores[i] = new Liebre(i, semaforos, puentesOcupados);
+		corredores = new Corredor[4];
+		for(int i = 0; i < corredores.length; i++) {
+			if(i % 2 == 0) {
+				corredores[i] = new Liebre(i, semaforos, puentes);
 			} else {
-				corredores[i] = new Tortuga(i, semaforos, puentesOcupados);
+				corredores[i] = new Tortuga(i, semaforos, puentes);
 			}			
 		}
 		
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < corredores.length; i++) {
 			corredores[i].start();
 		}
 	}
@@ -89,7 +91,7 @@ public class Carrera extends JFrame implements ActionListener {
 		for(int i = 0; i < corredores.length; i++) {
 			BufferedImage imagenCorredor = corredores[i].getImagenCorredor();
 			int distanciaRecorrida = corredores[i].getDistanciaRecorrida();
-			pintarCorredor(imagenCorredor,distanciaRecorrida);
+			pintarCorredor(imagenCorredor,distanciaRecorrida-imagenCorredor.getWidth());
 		}
 	}
 	

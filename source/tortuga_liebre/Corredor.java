@@ -7,11 +7,11 @@ public class Corredor extends Thread {
 	private int corredorID;
 	private BufferedImage imagenCorredor;
 	private boolean corriendo = true;
-	private int distanciaRecorrida = 0;
+	private int distanciaRecorrida = 50;
 	private Semaforo[] semaforos;
-	private boolean[] puentes;
+	private Puente[] puentes;
 
-	public Corredor(int corredorID, Semaforo[] semaforos, boolean[] puentes) {
+	public Corredor(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		this.corredorID = corredorID;
 		this.semaforos = semaforos;
 		this.puentes = puentes;
@@ -33,11 +33,11 @@ public class Corredor extends Thread {
 		this.semaforos = semaforos;
 	}
 
-	public boolean[] getPuentes() {
+	public Puente[] getPuentes() {
 		return puentes;
 	}
 
-	public void setPuentes(boolean[] puentes) {
+	public void setPuentes(Puente[] puentes) {
 		this.puentes = puentes;
 	}
 
@@ -65,11 +65,14 @@ public class Corredor extends Thread {
 		this.corriendo = corriendo;
 	}
 
-	public boolean enPuente(int posicion) {
-		if(posicion >= 30 && posicion <= 40) {
-			return true;
+	public int enPuente(int posicion) {
+		for(int i = 0; i < puentes.length; i++) {
+			if (posicion >= puentes[i].getPosicion() && 
+				posicion <= (puentes[i].getPosicion()+10)) {
+				return i;
+			}
 		}
-		return false;	
+		return -1;	
 	}
 	
 }
