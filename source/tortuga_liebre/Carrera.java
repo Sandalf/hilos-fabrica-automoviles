@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 import javax.swing.Timer;
@@ -17,7 +18,11 @@ public class Carrera extends JFrame implements ActionListener {
 	Image imageBuffer;
 	Corredor[] corredores;
 	Semaforo[] semaforos;
-	boolean[] puentes = { false, false };
+	Puente[]  puentes = { new Puente(100,100), new Puente(300,100) };
+	ArrayList<Corredor> ganadores = new ArrayList<Corredor>();
+	Semaforo semGanadores;
+	Rutinas rutinas = new Rutinas();
+	Timer t;
 	
 	public Carrera() {
 		try {
@@ -28,7 +33,7 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 	
 	public void CrearInterfaz() throws IOException {
-		setSize(600,122);
+		setSize(630,122);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
@@ -41,7 +46,7 @@ public class Carrera extends JFrame implements ActionListener {
 		inicializarSemaforos();
 		crearCorredores();
 		
-		Timer t = new Timer(1, this);
+		t = new Timer(1, this);
         t.setRepeats(true);
         t.setInitialDelay(0);
         t.start();
@@ -52,34 +57,35 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 	
 	public void pintarPista() {
-		Rutinas rutinas = new Rutinas();
 		BufferedImage imagenPista = rutinas.obtenerImagen("./camino.png");
-		BufferedImage imagenPuente = rutinas.obtenerImagen("./puente.png");
-		
+		BufferedImage imagenMeta = rutinas.obtenerImagen("./meta.png");
+			
 		for(int j = 0; j < 6; j++) {
-			// Dibujar Puente
-			if (j == 1 ||  j == 3) {
-				graphics.drawImage(imagenPuente, j*100, 22, null);
-			} else {
-				// Dibujar Pista
-				graphics.drawImage(imagenPista, j*100, 22, null);
-			}
+			graphics.drawImage(imagenPista, (j*100)+60, 22, null);
 		}
+		
+		pintarPuentes();
+		
+		/* Dibujar meta */
+		graphics.drawImage(imagenMeta, 0, 22, null);
+		graphics.drawImage(imagenMeta, imagenMeta.getWidth(), 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-imagenMeta.getWidth(), 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-(imagenMeta.getWidth()*2), 22, null);		
 		
 		repaint();
 	}
 
 	public void crearCorredores() {
-		corredores = new Corredor[2];
-		for(int i = 0; i < 2; i++) {
-			if(i == 0) {
+		corredores = new Corredor[6];
+		for(int i = 0; i < corredores.length; i++) {
+			if(i % 2 == 0) {
 				corredores[i] = new Liebre(i, semaforos, puentes);
 			} else {
 				corredores[i] = new Tortuga(i, semaforos, puentes);
 			}			
 		}
 		
-		for(int i = 0; i < 2; i++) {
+		for(int i = 0; i < corredores.length; i++) {
 			corredores[i].start();
 		}
 	}
@@ -89,12 +95,23 @@ public class Carrera extends JFrame implements ActionListener {
 		for(int i = 0; i < corredores.length; i++) {
 			BufferedImage imagenCorredor = corredores[i].getImagenCorredor();
 			int distanciaRecorrida = corredores[i].getDistanciaRecorrida();
-			pintarCorredor(imagenCorredor,distanciaRecorrida);
+			pintarCorredor(imagenCorredor,distanciaRecorrida-imagenCorredor.getWidth());
+			if(corredores[i].getDistanciaRecorrida() >= 620 &&
+					corredores[i].estaCorriendo()) {
+				System.out.println("Corredor agregado");
+				ganadores.add(corredores[i]);
+				corredores[i].setCorriendo(false);
+			}
+			if(ganadores.size() == corredores.length) {
+				t.stop();
+				System.out.println("Carrera terminada");
+				new TablaGanadores(ganadores);
+			}
 		}
 	}
 	
 	public void pintarCorredor(BufferedImage imagen, int distanciaRecorrida) {
-		graphics.drawImage(imagen, distanciaRecorrida, 0, null);
+		graphics.drawImage(imagen, distanciaRecorrida, 50, null);
 	}
 	
 	public void inicializarSemaforos() {
@@ -107,5 +124,17 @@ public class Carrera extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		pintarCorredores();
 		repaint();
+	}
+	
+	public void pintarPuentes() {
+		BufferedImage imagenPuente = rutinas.obtenerImagen("./puente.png");
+	
+		for(Puente puente : puentes) {
+			graphics.drawImage(imagenPuente, puente.getPosicion(), 22, null);
+		}	
+	}
+	
+	public void detenerCorredores() {
+		t.stop();
 	}
 }
