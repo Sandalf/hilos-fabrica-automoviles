@@ -61,10 +61,11 @@ public class Carrera extends JFrame implements ActionListener {
 			graphics.drawImage(imagenPista, (j*100)+60, 22, null);
 		}
 		
+		/* Dibujar meta */
 		graphics.drawImage(imagenMeta, 0, 22, null);
-		graphics.drawImage(imagenMeta, 30, 22, null);
-		graphics.drawImage(imagenMeta, getWidth()-30, 22, null);
-		graphics.drawImage(imagenMeta, getWidth()-60, 22, null);
+		graphics.drawImage(imagenMeta, imagenMeta.getWidth(), 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-imagenMeta.getWidth(), 22, null);
+		graphics.drawImage(imagenMeta, getWidth()-(imagenMeta.getWidth()*2), 22, null);
 		
 		pintarPuentes();
 		
@@ -72,7 +73,7 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 
 	public void crearCorredores() {
-		corredores = new Corredor[4];
+		corredores = new Corredor[6];
 		for(int i = 0; i < corredores.length; i++) {
 			if(i % 2 == 0) {
 				corredores[i] = new Liebre(i, semaforos, puentes);

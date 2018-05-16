@@ -10,6 +10,9 @@ public class Corredor extends Thread {
 	private int distanciaRecorrida = 50;
 	private Semaforo[] semaforos;
 	private Puente[] puentes;
+	private int minPasos;
+	private int maxPasos;
+	public Rutinas rutinas = new Rutinas();
 
 	public Corredor(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		this.corredorID = corredorID;
@@ -17,6 +20,60 @@ public class Corredor extends Thread {
 		this.puentes = puentes;
 	}
 
+	public int enPuente(int posicion) {
+		for(int i = 0; i < puentes.length; i++) {
+			if (posicion >= puentes[i].getPosicion() && 
+				posicion <= (puentes[i].getPosicion()+10)) {
+				return i;
+			}
+		}
+		return -1;	
+	}
+	
+	public void run() {
+		try {
+			while(estaCorriendo()) {
+				int pasos = rutinas.nextInt(getMinPasos(),getMaxPasos());
+
+				int numPuente = enPuente(getDistanciaRecorrida());
+				if(numPuente > -1) {
+					getSemaforos()[numPuente].espera();
+					Puente puente = getPuentes()[numPuente];
+					if(getPuentes()[numPuente].estaDisponible()) {					
+						atravesarPuente(numPuente,
+								puente.getPosicion(),
+								puente.getPosicion()+puente.getAncho());
+					}
+					getSemaforos()[numPuente].libera();
+				} else {
+					setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
+				}
+
+				if (getDistanciaRecorrida() >= 500) {
+					setCorriendo(false);
+				}				
+				sleep(100);			
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void atravesarPuente(int numPuente, int inicioPuente, int finPuente) {
+		try {
+			getPuentes()[numPuente].setDisponible(false);
+			while(getDistanciaRecorrida() >= inicioPuente && 
+				getDistanciaRecorrida() <= finPuente) {
+				int pasos = rutinas.nextInt(getMinPasos(),getMaxPasos());
+				setDistanciaRecorrida(getDistanciaRecorrida()+pasos);
+				sleep(100);
+			}
+			getPuentes()[numPuente].setDisponible(true);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public int getCorredorID() {
 		return corredorID;
 	}
@@ -65,14 +122,20 @@ public class Corredor extends Thread {
 		this.corriendo = corriendo;
 	}
 
-	public int enPuente(int posicion) {
-		for(int i = 0; i < puentes.length; i++) {
-			if (posicion >= puentes[i].getPosicion() && 
-				posicion <= (puentes[i].getPosicion()+10)) {
-				return i;
-			}
-		}
-		return -1;	
+	public int getMinPasos() {
+		return minPasos;
+	}
+
+	public void setMinPasos(int minPasos) {
+		this.minPasos = minPasos;
+	}
+
+	public int getMaxPasos() {
+		return maxPasos;
+	}
+
+	public void setMaxPasos(int maxPasos) {
+		this.maxPasos = maxPasos;
 	}
 	
 }
