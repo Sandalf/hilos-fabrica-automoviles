@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
-import javax.sound.midi.Synthesizer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
@@ -25,33 +24,26 @@ public class Fila extends Thread {
 	private boolean estaFabricando = true;
 	private static int[] segundosPorEstacion = {1,2,1,2,1,2};
 	private static int [] NoCarros;
+	private Rutinas rutinas = new Rutinas();
+	
 	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos, int TamNoCarros) throws IOException {
 		this.graphics = g;
 		this.filaID = id;
 		this.robots = robots;
 		this.semaforos = semaforos;
-		this.imagenRobot = inicializarRobot();
-		this.imagenDefault = inicializarImagenDefault();
+		this.imagenRobot = rutinas.obtenerImagen("./robot.png");
+		this.imagenDefault = rutinas.obtenerImagen("./cinta.jpg");
 		this.etapasCarro = inicializarEtapasCarro();
 		this.NoCarros = new int [TamNoCarros];
 		pintarFila();
-		pintarRobots();
 	}
 
 	public static Semaforo sem = new Semaforo(1);
 
-	public BufferedImage inicializarRobot() throws IOException {
-		InputStream is = this.getClass().getResourceAsStream("./robot.png");
-		BufferedImage bi = (BufferedImage) ImageIO.read(is);
-		return bi;
-	}
-
 	public BufferedImage[] inicializarEtapasCarro() throws IOException {
 		BufferedImage[] etapas = new BufferedImage[nomImg.length];	
 		for (int i = 0; i < etapas.length; i++) {
-			InputStream is = this.getClass().getResourceAsStream("./"+nomImg[i]);
-			BufferedImage bi = (BufferedImage) ImageIO.read(is);
-			etapas[i] = bi;
+			etapas[i] = rutinas.obtenerImagen("./"+nomImg[i]);
 		}	
 		return etapas;
 	}
@@ -66,12 +58,6 @@ public class Fila extends Thread {
 		}
 
 		return imagenes;
-	}
-
-	public BufferedImage inicializarImagenDefault() throws IOException {
-		InputStream is = this.getClass().getResourceAsStream("./cinta.jpg");
-		BufferedImage bi = (BufferedImage) ImageIO.read(is);
-		return bi;
 	}
 
 	public void run() {
@@ -101,27 +87,28 @@ public class Fila extends Thread {
 					graphics.drawImage(imagenRobot, estacion*100, (filaID*100)+10, null);
 					robots[estacion][filaID] = 1;
 				}
-				
-				
+
 				semaforos[estacion].libera();
-				
+
 				if(estacion == 5) {
 					estaFabricando = false;
 					NoCarros(estacion,filaID);
 				}
 				estacion++;
 			}
-			
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
+
 	public void pintarNoCarros(JLabel [] etiquetas){
 		for(int i = 0 ; i < etiquetas.length ; i++){
 			etiquetas[i].setBounds(620, i*90, 100, 100);
-			etiquetas[i].grabFocus();
+			etiquetas[i].update(etiquetas[i].getGraphics());
 		}
 	}
+
 	public void pintarFila() {
 		for(int i = 0; i < NoCarros.length; i++) {
 			for(int j = 0 ; j < 6 ; j++){		
@@ -129,7 +116,7 @@ public class Fila extends Thread {
 			}
 		}
 	}
-	
+
 	public int obtenerFilaRobotDisponible(int estacion) {
 		for(int j = 0; j < robots[0].length; j++) {
 			if(robots[estacion][j] == 1) {
@@ -138,31 +125,13 @@ public class Fila extends Thread {
 		}
 		return -1;	
 	}
-	public void pintarRobots(){
-		int alea= Rutinas.nextInt(2,5);
-		int alea2= Rutinas.nextInt(2,5);
-		for(int k = 0 ; k < 6 ; k++) {
-			if(k<5){//ESTACION 1
-				graphics.drawImage(imagenRobot, 0, (k*100)+10, null);
-			}
-			graphics.drawImage(imagenRobot, 100, (k*100)+10, null); //ESTACION 2
-			if(k<3) {//ESTACION 3,4
-				graphics.drawImage(imagenRobot, 200, (k*100)+10, null);
-				graphics.drawImage(imagenRobot, 300, (k*100)+10, null);
-			}
-			if(k<alea)//ESTACION 5
-				graphics.drawImage(imagenRobot, 400, (k*100)+10, null);
-			if(k<alea2)//ESTACION 6
-				graphics.drawImage(imagenRobot, 500, (k*100)+10, null);
-		}
-		
-	}
+	
 	public synchronized void NoCarros(int estacion,int pos) {
 		if(estacion == 5){
 			this.NoCarros[pos]++;
 		}
-		
 	}
+	
 	public String getNoCarros(int pos){
 		return this.NoCarros[pos]+"";
 	}
