@@ -1,7 +1,6 @@
 package tortuga_liebre;
 
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class Corredor extends Thread {
 	
@@ -15,15 +14,11 @@ public class Corredor extends Thread {
 	private int maxPasos;
 	public Rutinas rutinas = new Rutinas();
 	public static boolean ingresandoGanador = false;
-	private ArrayList<Corredor> ganadores;
-	private Semaforo semGanadores;
 
 	public Corredor(int corredorID, Semaforo[] semaforos, Puente[] puentes) {
 		this.corredorID = corredorID;
 		this.semaforos = semaforos;
 		this.puentes = puentes;
-//		this.ganadores = ganadores;
-//		this.semGanadores = semGanadores;
 	}
 
 	public int enPuente(int posicion) {
