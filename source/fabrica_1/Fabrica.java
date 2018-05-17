@@ -50,7 +50,6 @@ public class Fabrica extends JFrame implements ActionListener {
 		crearFilas();
 		crearEtiquetas();
 		agregarEtiquetas();
-		ActualizaEtiquetas();	
 
 		Timer t = new Timer(1, this);
 		t.setRepeats(true);
@@ -79,10 +78,8 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-//		removeAll();
-//		ActualizaEtiquetas();
+		actualizaEtiquetas();
 		repaint();
-		setVisible(true);
 	}
 
 	public void crearEtiquetas(){
@@ -107,11 +104,10 @@ public class Fabrica extends JFrame implements ActionListener {
 		}
 	}
 
-	public void ActualizaEtiquetas(){
+	public void actualizaEtiquetas(){
 		for(int i = 0 ; i < etiquetas.length ; i++){
 			etiquetas[i].setText(filas[i].getNoCarros(i));
-			filas[i].pintarNoCarros(etiquetas);	
-			//etiquetas[i].grabFocus();
+			filas[i].pintarNoCarros(etiquetas);
 			etiquetas[i].update(etiquetas[i].getGraphics());
 		}
 	}
