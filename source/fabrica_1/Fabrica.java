@@ -18,9 +18,8 @@ public class Fabrica extends JFrame implements ActionListener {
 	// 0 - no hay robot en estacion
 	// 1 - el robot esta disponible
 	// 2 - el robot esta ocupado
-	// 3 - el robot de transmision
-	// 4 - el robot de transmision no disponible
-	// 5 - el robot de transmision no en estacion
+	// 3 - el robot de transmision disponible
+	// 4 - el robot de transmision ocupado
 	int[][] robots;
 	Semaforo[] semaforos;
 	Rutinas rutinas = new Rutinas();
