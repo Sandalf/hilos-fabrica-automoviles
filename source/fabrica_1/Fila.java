@@ -50,26 +50,20 @@ public class Fila extends Thread {
 				semaforos[estacion].espera();
 				int filaRobotDisponible = obtenerFilaRobotDisponible(estacion);
 				if(robots[estacion][filaID] == 1) {
-					robots[estacion][filaID] = 2;
-					graphics.drawImage(imagenDefault, estacion*100, filaID*100, null); 
-					graphics.drawImage(imagenRobot, estacion*100, (filaID*100)+10, null);
-					graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
+					robots[estacion][filaID] = 2;				
+					pintarEstacionCarro(estacion,filaID);
 					sleep(segundosPorEstacion[estacion]*1000);
-					graphics.drawImage(imagenDefault, estacion*100, filaID*100, null);
-					graphics.drawImage(imagenRobot, estacion*100, (filaID*100)+10, null);
+					pintarEstacionRobot(estacion, filaID);
 					robots[estacion][filaID] = 1;
 				} else if (filaRobotDisponible > -1) {
 					robots[estacion][filaRobotDisponible] = 0;
-					graphics.drawImage(imagenDefault, estacion*100, filaRobotDisponible*100, null);
 					robots[estacion][filaID] = 2;
-					graphics.drawImage(imagenRobot, estacion*100, (filaID*100)+10, null);
-					graphics.drawImage(etapasCarro[estacion], estacion*100, filaID*100, null);
+					pintarEstacionVacia(estacion,filaRobotDisponible);
+					pintarEstacionCarro(estacion,filaID);
 					sleep(segundosPorEstacion[estacion]*1000);
-					graphics.drawImage(imagenDefault, estacion*100, filaID*100, null);
-					graphics.drawImage(imagenRobot, estacion*100, (filaID*100)+10, null);
+					pintarEstacionRobot(estacion, filaID);
 					robots[estacion][filaID] = 1;
 				}
-
 				semaforos[estacion].libera();
 
 				if(estacion == 5) {
@@ -116,6 +110,21 @@ public class Fila extends Thread {
 	
 	public String getNoCarros(int pos){
 		return this.NoCarros[pos]+"";
+	}
+	
+	public void pintarEstacionCarro(int estacion, int fila) {
+		graphics.drawImage(imagenDefault, estacion*100, fila*100, null); 
+		graphics.drawImage(imagenRobot, estacion*100, (fila*100)+10, null);
+		graphics.drawImage(etapasCarro[estacion], estacion*100, fila*100, null);
+	}
+	
+	public void pintarEstacionVacia(int estacion, int fila) {
+		graphics.drawImage(imagenDefault, estacion*100, fila*100, null);
+	}
+	
+	public void pintarEstacionRobot(int estacion, int fila) {
+		graphics.drawImage(imagenDefault, estacion*100, fila*100, null);
+		graphics.drawImage(imagenRobot, estacion*100, (fila*100)+10, null);
 	}
 
 }
