@@ -76,7 +76,7 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 
 	public void crearCorredores() {
-		corredores = new Corredor[6];
+		corredores = new Corredor[2];
 		for(int i = 0; i < corredores.length; i++) {
 			if(i % 2 == 0) {
 				corredores[i] = new Liebre(i, semaforos, puentes);
@@ -104,8 +104,13 @@ public class Carrera extends JFrame implements ActionListener {
 			}
 			if(ganadores.size() == corredores.length) {
 				t.stop();
-				System.out.println("Carrera terminada");
-				new TablaGanadores(ganadores);
+				JFrame frame= new JFrame();	
+				frame.getContentPane().add(new TablaGanadores(ganadores));
+				frame.setSize(150, 400);
+				frame.setVisible(true);
+				frame.setLocationRelativeTo(null);
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setResizable(false);
 			}
 		}
 	}
@@ -134,7 +139,4 @@ public class Carrera extends JFrame implements ActionListener {
 		}	
 	}
 	
-	public void detenerCorredores() {
-		t.stop();
-	}
 }

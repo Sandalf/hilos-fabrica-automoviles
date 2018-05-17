@@ -5,11 +5,11 @@ import java.awt.Image;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 @SuppressWarnings("serial")
-public class TablaGanadores extends JFrame {
+public class TablaGanadores extends JPanel {
 	
 	Graphics graphics;
 	Image imageBuffer;
@@ -18,6 +18,7 @@ public class TablaGanadores extends JFrame {
 	JButton btnSig;
 	Corredor corredorActual;
 	JLabel lblPosicion;
+	Rutinas rutinas = new Rutinas();
 
 	public TablaGanadores(ArrayList<Corredor> ganadores) {
 		this.ganadores = ganadores;
@@ -25,10 +26,8 @@ public class TablaGanadores extends JFrame {
 	}
 	
 	public void CrearInterfaz() {
-		setSize(300,300);
+		setSize(150,400);
 		setLayout(null);
-		setLocationRelativeTo(null);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		corredorActual = ganadores.get(0);
 		
@@ -37,27 +36,25 @@ public class TablaGanadores extends JFrame {
 		btnAnt.setVisible(true);
 		add(btnAnt);
 		
-		
 		btnSig = new JButton(">");
 		btnSig.setBounds(260, 140, 20, 20);
 		btnSig.setVisible(true);
-		add(btnSig);
+		add(btnSig);	
 		
-		
-		setVisible(true);
-			
-		imageBuffer = createImage(getWidth(),getHeight());
-		graphics = imageBuffer.getGraphics();
-		
-		pintarCorredor();
+		setVisible(true);		
 	}
 	
 	public void paint(Graphics g) {
-		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
+		g.drawImage(rutinas.obtenerImagen("./fondo.png"), 0, 0, null);	
+		g.drawString("Ganador!!", 50, 20);	
+		g.drawImage(corredorActual.getImagenCorredor(), 50, 40, null);
+		
+		for(int i = 0; i < ganadores.size(); i++) {
+			Image imagenReducida = ganadores.get(i).getImagenCorredor().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+			g.drawString("#"+(i+1), 40, 135+(i*30));
+			g.drawImage(imagenReducida,60,120+(i*30),null);
+		}
+
 	}
 	
-	public void pintarCorredor() {
-		graphics.drawImage(corredorActual.getImagenCorredor(), 125, 125, null);
-		repaint();
-	}
 }
