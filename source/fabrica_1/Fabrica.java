@@ -18,6 +18,9 @@ public class Fabrica extends JFrame implements ActionListener {
 	// 0 - no hay robot en estacion
 	// 1 - el robot esta disponible
 	// 2 - el robot esta ocupado
+	// 3 - el robot de transmision
+	// 4 - el robot de transmision no disponible
+	// 5 - el robot de transmision no en estacion
 	int[][] robots;
 	Semaforo[] semaforos;
 	Rutinas rutinas = new Rutinas();
@@ -27,7 +30,7 @@ public class Fabrica extends JFrame implements ActionListener {
 	Fila[] filas;
 	JLabel [] etiquetas;
 	//int tamano = rutinas.nextInt(5,8);
-	int tamano = 5;
+	int tamano = 6;
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -59,6 +62,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		g.drawImage(imageBuffer, 0, 50, getWidth()-50, getHeight()-50, this);
 		g.setColor(Color.white);
 		g.fillRect(600, 0, 50, getHeight());
+		//g.fillRect(0, 0, getWidth(), 70);
 	}
 
 	public void crearFilas() {
@@ -84,7 +88,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		etiquetas = new JLabel [filas.length];
 		for(int i = 0 ; i < filas.length ; i++){
 			etiquetas[i] = new JLabel("0");
-			etiquetas[i].setBounds(620, (i*100), 100, 100);
+			etiquetas[i].setBounds(620, (i*100)+20, 100, 100);
 			etiquetas[i].setVisible(true);
 			add(etiquetas[i]);
 		}
@@ -108,10 +112,13 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void pintarRobots() {
 		BufferedImage imagenRobot = rutinas.obtenerImagen("./robot.png");
+		BufferedImage imagenRobotTrans = rutinas.obtenerImagen("./robot-trans.png");
 		for(int i = 0; i < robots.length; i++) {
 			for(int j = 0; j < robots[i].length; j++) {
 				if(robots[i][j] == 1) {
 					graphics.drawImage(imagenRobot, i*100, (j*100)+10, null);
+				} else if(robots[i][j] == 3) {
+					graphics.drawImage(imagenRobotTrans, i*100, (j*100)+10, null);
 				}
 			}
 		}
@@ -125,7 +132,12 @@ public class Fabrica extends JFrame implements ActionListener {
 				if(i == 0 && j < 5) {
 					robots[i][j] = 1;
 				} else if (i == 1 && j < 6) {
-					robots[i][j] = 1;
+					if(j < 4) {
+						robots[i][j] = 1;
+					} else {
+						robots[i][j] = 3;
+					}
+					
 				} else if ((i == 2 || i == 3 || i == 4) && j < 3) {
 					robots[i][j] = 1;
 				} else if (i == 5 && j < robotsEstacion) {
