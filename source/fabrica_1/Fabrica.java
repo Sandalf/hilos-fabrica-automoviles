@@ -1,5 +1,6 @@
 package fabrica_1;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -33,29 +34,31 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void CrearInterfaz() {
-		setSize(650,tamano*100);
+		setSize(650,(tamano*100)+50);
 		setAlwaysOnTop(true);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		imageBuffer = createImage(getWidth(),getHeight());
+		imageBuffer = createImage(getWidth()-50,getHeight()-50);
 		graphics = imageBuffer.getGraphics();
 
 		crearRobots();
 		inicializarSemaforos();
 		crearFilas();
 		crearEtiquetas();
+		getContentPane().setBackground(Color.WHITE);
 
-		Timer t = new Timer(1, this);
+		Timer t = new Timer(0, this);
 		t.setRepeats(true);
-		t.setInitialDelay(0);
 		t.start();
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
+		g.drawImage(imageBuffer, 0, 50, getWidth()-50, getHeight()-50, this);
+		g.setColor(Color.white);
+		g.fillRect(600, 0, 50, getHeight());
 	}
 
 	public void crearFilas() {
@@ -80,8 +83,8 @@ public class Fabrica extends JFrame implements ActionListener {
 	public void crearEtiquetas(){
 		etiquetas = new JLabel [filas.length];
 		for(int i = 0 ; i < filas.length ; i++){
-			etiquetas[i] = new JLabel();
-			etiquetas[i].setBounds(getWidth()-20, 20, 20, 20);
+			etiquetas[i] = new JLabel("0");
+			etiquetas[i].setBounds(620, (i*100), 100, 100);
 			etiquetas[i].setVisible(true);
 			add(etiquetas[i]);
 		}
@@ -94,11 +97,12 @@ public class Fabrica extends JFrame implements ActionListener {
 		}
 	}
 
-	public void actualizaEtiquetas(){
-		for(int i = 0 ; i < etiquetas.length ; i++){
+	public void actualizaEtiquetas(){	
+		for(int i = 0 ; i < etiquetas.length ; i++) {
 			etiquetas[i].setText(filas[i].getNoCarros(i));
-			filas[i].pintarNoCarros(etiquetas);
-			etiquetas[i].update(etiquetas[i].getGraphics());
+			for(int j = 0 ; j < 4 ; j++) {
+				etiquetas[i].update(etiquetas[i].getGraphics());
+			}
 		}
 	}
 
@@ -107,7 +111,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		for(int i = 0; i < robots.length; i++) {
 			for(int j = 0; j < robots[i].length; j++) {
 				if(robots[i][j] == 1) {
-					graphics.drawImage(imagenRobot, (i*100), (j*100)+10, null);
+					graphics.drawImage(imagenRobot, i*100, (j*100)+10, null);
 				}
 			}
 		}

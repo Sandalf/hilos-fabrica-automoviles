@@ -3,7 +3,6 @@ package fabrica_1;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-import javax.sound.midi.Synthesizer;
 import javax.swing.JLabel;
 
 public class Fila extends Thread {
