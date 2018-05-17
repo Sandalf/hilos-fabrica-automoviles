@@ -5,7 +5,6 @@ import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -14,22 +13,20 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Fabrica extends JFrame implements ActionListener {
 
+	// Estatus Robots:
+	// 0 - no hay robot en estacion
+	// 1 - el robot esta disponible
+	// 2 - el robot esta ocupado
+	int[][] robots;
+	Semaforo[] semaforos;
+	Rutinas rutinas = new Rutinas();
 	Graphics graphics;
 	Image imageBuffer;
 	Image [] img;
 	Fila[] filas;
 	JLabel [] etiquetas;
-	//int tama�o = Rutinas.nextInt(8,15);
-	int tamano = 4 ;
-	// Estatus Robots:
-	// 0 - no hay robot en estacion
-	// 1 - el robot esta disponible
-	// 2 - el robot esta ocupado
-	int[][] robots = {
-			{1,0,1,0},{1,0,0,0},{1,0,1,0},
-			{1,0,0,0},{1,0,1,1},{1,0,0,0}};
-	Semaforo[] semaforos;
-	Rutinas rutinas = new Rutinas();
+	//int tamano = rutinas.nextInt(5,8);
+	int tamano = 5;
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -46,10 +43,10 @@ public class Fabrica extends JFrame implements ActionListener {
 		imageBuffer = createImage(getWidth(),getHeight());
 		graphics = imageBuffer.getGraphics();
 
+		crearRobots();
 		inicializarSemaforos();
 		crearFilas();
 		crearEtiquetas();
-		agregarEtiquetas();
 
 		Timer t = new Timer(1, this);
 		t.setRepeats(true);
@@ -62,18 +59,16 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void crearFilas() {
-		try {
-			filas = new Fila[tamano];
+		filas = new Fila[tamano];
 
-			for(int i = 0; i < filas.length; i++) {
-				filas[i] = new Fila(i,graphics,robots,semaforos,filas.length);
-			}
-			pintarRobots();
-			for(int i = 0; i < filas.length; i++) {
-				filas[i].start();
-			}	
-		} catch (IOException e) {
-			e.printStackTrace();
+		for(int i = 0; i < filas.length; i++) {
+			filas[i] = new Fila(i,graphics,robots,semaforos,filas.length);
+		}
+
+		pintarRobots();
+
+		for(int i = 0; i < filas.length; i++) {
+			filas[i].start();
 		}
 	}
 
@@ -88,6 +83,7 @@ public class Fabrica extends JFrame implements ActionListener {
 			etiquetas[i] = new JLabel();
 			etiquetas[i].setBounds(getWidth()-20, 20, 20, 20);
 			etiquetas[i].setVisible(true);
+			add(etiquetas[i]);
 		}
 	}
 
@@ -98,12 +94,6 @@ public class Fabrica extends JFrame implements ActionListener {
 		}
 	}
 
-	public void agregarEtiquetas(){
-		for(int i = 0 ; i < etiquetas.length ; i++){
-			this.add(etiquetas[i]);
-		}
-	}
-
 	public void actualizaEtiquetas(){
 		for(int i = 0 ; i < etiquetas.length ; i++){
 			etiquetas[i].setText(filas[i].getNoCarros(i));
@@ -111,13 +101,33 @@ public class Fabrica extends JFrame implements ActionListener {
 			etiquetas[i].update(etiquetas[i].getGraphics());
 		}
 	}
-	
+
 	public void pintarRobots() {
 		BufferedImage imagenRobot = rutinas.obtenerImagen("./robot.png");
 		for(int i = 0; i < robots.length; i++) {
 			for(int j = 0; j < robots[i].length; j++) {
 				if(robots[i][j] == 1) {
 					graphics.drawImage(imagenRobot, (i*100), (j*100)+10, null);
+				}
+			}
+		}
+	}
+
+	public void crearRobots() {
+		robots = new int[6][tamano];
+		int robotsEstacion = rutinas.nextInt(1,tamano);
+		for(int i = 0; i < robots.length; i++) {
+			for(int j = 0; j < robots[i].length; j++) {
+				if(i == 0 && j < 5) {
+					robots[i][j] = 1;
+				} else if (i == 1 && j < 6) {
+					robots[i][j] = 1;
+				} else if ((i == 2 || i == 3 || i == 4) && j < 3) {
+					robots[i][j] = 1;
+				} else if (i == 5 && j < robotsEstacion) {
+					robots[i][j] = 1;
+				} else {
+					robots[i][j] = 0;
 				}
 			}
 		}

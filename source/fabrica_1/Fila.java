@@ -1,13 +1,9 @@
 package fabrica_1;
 
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.sound.midi.Synthesizer;
 import javax.swing.JLabel;
 
 public class Fila extends Thread {
@@ -26,7 +22,7 @@ public class Fila extends Thread {
 	private static int [] NoCarros;
 	private Rutinas rutinas = new Rutinas();
 	
-	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos, int TamNoCarros) throws IOException {
+	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos, int TamNoCarros) {
 		this.graphics = g;
 		this.filaID = id;
 		this.robots = robots;
@@ -40,7 +36,7 @@ public class Fila extends Thread {
 
 	public static Semaforo sem = new Semaforo(1);
 
-	public BufferedImage[] inicializarEtapasCarro() throws IOException {
+	public BufferedImage[] inicializarEtapasCarro() {
 		BufferedImage[] etapas = new BufferedImage[nomImg.length];	
 		for (int i = 0; i < etapas.length; i++) {
 			etapas[i] = rutinas.obtenerImagen("./"+nomImg[i]);
@@ -48,23 +44,10 @@ public class Fila extends Thread {
 		return etapas;
 	}
 
-	public ImageIcon[] inicializarImagenes() throws IOException {
-		ImageIcon[] imagenes = new ImageIcon[6];
-		InputStream is = this.getClass().getResourceAsStream("./cinta.jpg");
-		Image img = ImageIO.read(is);
-
-		for (int i = 0; i < imagenes.length; i++) {
-			imagenes[i] = new ImageIcon(img);
-		}
-
-		return imagenes;
-	}
-
 	public void run() {
 		try {
 			int estacion = 0;
 			while(estaFabricando){
-				System.out.println("Estacion: " + estacion + ", Fila: " + filaID);
 				semaforos[estacion].espera();
 				int filaRobotDisponible = obtenerFilaRobotDisponible(estacion);
 				if(robots[estacion][filaID] == 1) {
