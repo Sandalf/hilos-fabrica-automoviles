@@ -1,8 +1,12 @@
 package fabrica_1;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 
 public class Rutinas {
@@ -66,5 +70,16 @@ public class Rutinas {
 		// Escalar Imagen
 		ImageIcon tmpIcon = new ImageIcon(tmpIconAux.getImage().getScaledInstance(Ancho, Alto, Image.SCALE_SMOOTH));// SCALE_DEFAULT
 		return tmpIcon;
+	}
+	
+	public BufferedImage obtenerImagen(String ruta) {
+		BufferedImage imagen = null;	
+		try {
+			InputStream is = this.getClass().getResourceAsStream(ruta);		
+			imagen = (BufferedImage) ImageIO.read(is);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return imagen;
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.swing.JFrame;
@@ -18,8 +19,8 @@ public class Fabrica extends JFrame implements ActionListener {
 	Image [] img;
 	Fila[] filas;
 	JLabel [] etiquetas;
-	//int tamaño = Rutinas.nextInt(8,15);
-	int tamaño = 4 ;
+	//int tamaï¿½o = Rutinas.nextInt(8,15);
+	int tamano = 4 ;
 	// Estatus Robots:
 	// 0 - no hay robot en estacion
 	// 1 - el robot esta disponible
@@ -28,20 +29,14 @@ public class Fabrica extends JFrame implements ActionListener {
 			{1,0,1,0},{1,0,0,0},{1,0,1,0},
 			{1,0,0,0},{1,0,1,1},{1,0,0,0}};
 	Semaforo[] semaforos;
-	
-	// TODO:
-	// - Contar carros fabricados por fila // falta ver por que pinta las etiquetas y el contador lo hice static
-	// - Pintar cintas desde el inicio //pinto todas la cintas antes de empezar 
-	// - Pintar robots desde el inicio // ya agregue los robots por estacion falta aumentar el numero de filas 
-	// son aleatorias entre 8 y 15 cale una mamada pero no cabe en la pantalla por que son muchos pixeles
+	Rutinas rutinas = new Rutinas();
 
 	public Fabrica() {
 		CrearInterfaz();
 	}
 
 	public void CrearInterfaz() {
-		//setSize(650,robots[0].length*100);
-		setSize(650,tamaño*100);
+		setSize(650,tamano*100);
 		setAlwaysOnTop(true);
 		setLayout(null);
 		setLocationRelativeTo(null);
@@ -55,30 +50,25 @@ public class Fabrica extends JFrame implements ActionListener {
 		crearFilas();
 		crearEtiquetas();
 		agregarEtiquetas();
-		ActualizaEtiquetas();
-		
-		
-		
-		
+
 		Timer t = new Timer(1, this);
-        t.setRepeats(true);
-        t.setInitialDelay(0);
-        t.start();
+		t.setRepeats(true);
+		t.setInitialDelay(0);
+		t.start();
 	}
 
 	public void paint(Graphics g) {
 		g.drawImage(imageBuffer, 0, 0, getWidth(), getHeight(), this);
-		
 	}
 
 	public void crearFilas() {
 		try {
-			filas = new Fila[tamaño];
-			
+			filas = new Fila[tamano];
+
 			for(int i = 0; i < filas.length; i++) {
 				filas[i] = new Fila(i,graphics,robots,semaforos,filas.length);
 			}
-			
+			pintarRobots();
 			for(int i = 0; i < filas.length; i++) {
 				filas[i].start();
 			}	
@@ -88,34 +78,48 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-//		removeAll();
-//		ActualizaEtiquetas();
+		actualizaEtiquetas();
 		repaint();
-		setVisible(true);
 	}
+
 	public void crearEtiquetas(){
 		etiquetas = new JLabel [filas.length];
 		for(int i = 0 ; i < filas.length ; i++){
-			etiquetas[i] = new JLabel("0");
+			etiquetas[i] = new JLabel();
+			etiquetas[i].setBounds(getWidth()-20, 20, 20, 20);
+			etiquetas[i].setVisible(true);
 		}
 	}
-	
+
 	public void inicializarSemaforos() {
 		this.semaforos = new Semaforo[robots.length];
 		for(int i = 0; i < robots.length; i++) {
 			semaforos[i] = new Semaforo(1);
 		}
 	}
+
 	public void agregarEtiquetas(){
 		for(int i = 0 ; i < etiquetas.length ; i++){
 			this.add(etiquetas[i]);
 		}
 	}
-	public void ActualizaEtiquetas(){
+
+	public void actualizaEtiquetas(){
 		for(int i = 0 ; i < etiquetas.length ; i++){
 			etiquetas[i].setText(filas[i].getNoCarros(i));
-			filas[i].pintarNoCarros(etiquetas);	
-			etiquetas[i].grabFocus();
+			filas[i].pintarNoCarros(etiquetas);
+			etiquetas[i].update(etiquetas[i].getGraphics());
+		}
+	}
+	
+	public void pintarRobots() {
+		BufferedImage imagenRobot = rutinas.obtenerImagen("./robot.png");
+		for(int i = 0; i < robots.length; i++) {
+			for(int j = 0; j < robots[i].length; j++) {
+				if(robots[i][j] == 1) {
+					graphics.drawImage(imagenRobot, (i*100), (j*100)+10, null);
+				}
+			}
 		}
 	}
 
