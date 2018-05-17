@@ -88,14 +88,15 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+//		removeAll();
+//		ActualizaEtiquetas();
 		repaint();
-		//No las ACTUALIZA 
-		ActualizaEtiquetas();
+		setVisible(true);
 	}
 	public void crearEtiquetas(){
 		etiquetas = new JLabel [filas.length];
 		for(int i = 0 ; i < filas.length ; i++){
-			etiquetas[i] = new JLabel();
+			etiquetas[i] = new JLabel("0");
 		}
 	}
 	
