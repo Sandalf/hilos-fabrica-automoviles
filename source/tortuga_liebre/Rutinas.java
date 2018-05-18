@@ -1,11 +1,13 @@
 package tortuga_liebre;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 public class Rutinas {
 	static Random R = new Random();
@@ -32,4 +34,13 @@ public class Rutinas {
 		}
 		return imagen;
 	}
+	
+	 public  ImageIcon AjustarImagen(String ico,int Ancho,int Alto)
+	    {
+	        ImageIcon tmpIconAux = new ImageIcon(ico);
+	        //Escalar Imagen
+	        ImageIcon tmpIcon = new ImageIcon(tmpIconAux.getImage().getScaledInstance(Ancho,
+	        		Alto, Image.SCALE_SMOOTH));//SCALE_DEFAULT
+	        return tmpIcon;
+	    }
 }

@@ -1,6 +1,7 @@
 package tortuga_liebre;
 
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.util.ArrayList;
 
@@ -26,10 +27,10 @@ public class TablaGanadores extends JPanel {
 	}
 	
 	public void CrearInterfaz() {
-		setSize(150,400);
+		setSize(150,800);
 		setLayout(null);
-		
 		corredorActual = ganadores.get(0);
+	
 		
 		btnAnt = new JButton("<");
 		btnAnt.setBounds(20, 140, 20, 20);
@@ -47,12 +48,18 @@ public class TablaGanadores extends JPanel {
 	public void paint(Graphics g) {
 		g.drawImage(rutinas.obtenerImagen("./fondo.png"), 0, 0, null);	
 		g.drawString("Ganador!!", 50, 20);	
-		g.drawImage(corredorActual.getImagenCorredor(), 50, 40, null);
-		
-		for(int i = 0; i < ganadores.size(); i++) {
+		g.drawImage(corredorActual.getImagenCorredor(), 45, 40, null);
+		for(int i = 0; i < 8; i++) {
 			Image imagenReducida = ganadores.get(i).getImagenCorredor().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-			g.drawString("#"+(i+1), 40, 135+(i*30));
-			g.drawImage(imagenReducida,60,120+(i*30),null);
+			g.drawString("#"+(i+1), 10, 135+(i*30));
+			g.drawImage(imagenReducida,30,120+(i*30),null);
+		}
+		if(ganadores.size()>8){
+			for(int i = 8 ; i < ganadores.size() ; i++) {
+				Image imagenReducida = ganadores.get(i).getImagenCorredor().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+				g.drawString("#"+(i+1), 70, 135+((i-8)*30));
+				g.drawImage(imagenReducida,90, 120+((i-8)*30),null);
+			}
 		}
 
 	}

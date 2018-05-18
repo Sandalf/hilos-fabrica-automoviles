@@ -1,6 +1,7 @@
 package tortuga_liebre;
 
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,14 +19,20 @@ public class Carrera extends JFrame implements ActionListener {
 	Image imageBuffer;
 	Corredor[] corredores;
 	Semaforo[] semaforos;
-	Puente[]  puentes = { new Puente(100,100), new Puente(300,100) };
+	Puente[]  puentes = { new Puente(100,100), new Puente(200,100),new Puente(300,100) };
 	ArrayList<Corredor> ganadores = new ArrayList<Corredor>();
 	Semaforo semGanadores;
 	Rutinas rutinas = new Rutinas();
 	Timer t;
-	
-	public Carrera() {
+	int NoTortugas,NoLiebres;
+	int [] posPuentes;
+	public Carrera(int [] posPuentes, int NoTortugas,int NoLiebres) {
 		try {
+			
+			this.posPuentes = posPuentes;
+			this.NoTortugas = NoTortugas;
+			this.NoLiebres = NoLiebres;
+			AcomodaPuente();
 			CrearInterfaz();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -33,15 +40,12 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 	
 	public void CrearInterfaz() throws IOException {
-		setSize(630,122);
+		setSize(1000,122);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
 		imageBuffer = createImage(getWidth(),getHeight());
 		graphics = imageBuffer.getGraphics();
-		
 		pintarPista();
 		inicializarSemaforos();
 		crearCorredores();
@@ -60,7 +64,7 @@ public class Carrera extends JFrame implements ActionListener {
 		BufferedImage imagenPista = rutinas.obtenerImagen("./camino.png");
 		BufferedImage imagenMeta = rutinas.obtenerImagen("./meta.png");
 			
-		for(int j = 0; j < 6; j++) {
+		for(int j = 0; j < 10; j++) {
 			graphics.drawImage(imagenPista, (j*100)+60, 22, null);
 		}
 		
@@ -76,14 +80,14 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 
 	public void crearCorredores() {
-		corredores = new Corredor[2];
-		for(int i = 0; i < corredores.length; i++) {
-			if(i % 2 == 0) {
-				corredores[i] = new Liebre(i, semaforos, puentes);
-			} else {
-				corredores[i] = new Tortuga(i, semaforos, puentes);
-			}			
+		corredores = new Corredor[NoTortugas+NoLiebres];
+		for(int i = 0; i < NoTortugas; i++) {
+			corredores[i] = new Tortuga(i, semaforos, puentes);		
 		}
+		for (int i = NoTortugas ; i < (NoTortugas + NoLiebres) ;i++){
+			corredores[i] = new Liebre(i, semaforos, puentes);
+		}
+		
 		
 		for(int i = 0; i < corredores.length; i++) {
 			corredores[i].start();
@@ -96,7 +100,7 @@ public class Carrera extends JFrame implements ActionListener {
 			BufferedImage imagenCorredor = corredores[i].getImagenCorredor();
 			int distanciaRecorrida = corredores[i].getDistanciaRecorrida();
 			pintarCorredor(imagenCorredor,distanciaRecorrida-imagenCorredor.getWidth());
-			if(corredores[i].getDistanciaRecorrida() >= 620 &&
+			if(corredores[i].getDistanciaRecorrida() >= 1000 &&
 					corredores[i].estaCorriendo()) {
 				System.out.println("Corredor agregado");
 				ganadores.add(corredores[i]);
@@ -104,12 +108,13 @@ public class Carrera extends JFrame implements ActionListener {
 			}
 			if(ganadores.size() == corredores.length) {
 				t.stop();
-				JFrame frame= new JFrame();	
+				JFrame frame= new JFrame();
+				frame.setLayout(null);
 				frame.getContentPane().add(new TablaGanadores(ganadores));
 				frame.setSize(150, 400);
 				frame.setVisible(true);
 				frame.setLocationRelativeTo(null);
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 				frame.setResizable(false);
 			}
 		}
@@ -120,23 +125,28 @@ public class Carrera extends JFrame implements ActionListener {
 	}
 	
 	public void inicializarSemaforos() {
-		semaforos = new Semaforo[2];
-		for(int i = 0; i < 2; i++) {
-			semaforos[i] = new Semaforo(1);
+		semaforos = new Semaforo[3];
+		for(int i = 0 ; i < 2; i++) { //<2
+			semaforos[i] = new Semaforo(i+2);
 		}
+		semaforos[2] = new Semaforo(1);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		pintarCorredores();
 		repaint();
 	}
-	
 	public void pintarPuentes() {
 		BufferedImage imagenPuente = rutinas.obtenerImagen("./puente.png");
-	
+		
+
 		for(Puente puente : puentes) {
 			graphics.drawImage(imagenPuente, puente.getPosicion(), 22, null);
 		}	
+	}
+	public void AcomodaPuente(){
+		for(int i = 0 ; i < puentes.length ; i++)
+		puentes[i].setPosicion(posPuentes[i]);
 	}
 	
 }

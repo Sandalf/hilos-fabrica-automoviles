@@ -1,7 +1,14 @@
 package tortuga_liebre;
 
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -9,18 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 @SuppressWarnings("serial")
-public class Menu extends JFrame {
-	
-	/*
-	 *Falta ajustar el foco de los componentes
-	 *y creo que seria mejor usar el LeEntero en las cajas de texto
-	 */
-	
+public class Menu extends JFrame implements ActionListener {
 	
 	private JLabel lblPuente1,lblPuente2,lblPuente3;
-	private JTextField posPuente1, posPuente2,posPuente3;
+	private JLeeEntero [] cajas;
 	private JComboBox tortugas,liebres;
 	private Rutinas rutinas = new Rutinas();
+	private JButton empezar;
 	
 	public Menu() {
 		CrearInterfaz();
@@ -31,37 +33,14 @@ public class Menu extends JFrame {
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		creaCajas();
 		//CAJAS DE TEXTO
-		posPuente1 = new JTextField();
-		posPuente1.setBounds(70,40,100,25);
-		add(posPuente1);
-		posPuente1.setVisible(true);
-		
-		
-		posPuente2 = new JTextField();
-		posPuente2.setBounds(70, 70, 100, 25);
-		add(posPuente2);
-		posPuente2.setVisible(true);
-		
-		posPuente3 = new JTextField();
-		posPuente3.setBounds(70, 100, 100, 25);
-		add(posPuente3);
-		//posPuente3.setVisible(true);
-		
-		//ETIQUETAS
-		
-		lblPuente1 = new JLabel("Puente 1:");
-		lblPuente1.setBounds(10,40,100,30);
-		add(lblPuente1);
-		lblPuente1.setVisible(true);
-		
-		lblPuente2 = new JLabel("Puente 2:");
-		lblPuente2.setBounds(10,70,100,30);
-		add(lblPuente2);
-		
-		lblPuente3 = new JLabel("Puente 3:");
-		lblPuente3.setBounds(10,100,100,30);
-		add(lblPuente3);
+		int cont = 0;
+		for(int i = 0 ; i < cajas.length ;i++){
+			cajas[i].setBounds(90, 30+cont, 100, 25);
+			add(cajas[i]);
+			cont += 30;
+		}
 		
 		//COMBOS
 		tortugas = new JComboBox();
@@ -79,12 +58,74 @@ public class Menu extends JFrame {
 			
 		add(tortugas);
 		add(liebres);
-		
+		empezar = new JButton("Start");
+		empezar.setBounds(90,220,100,20);
+		add(empezar);
+		escuchadores();	
 		setVisible(true);
 	}
-	
+	public void escuchadores(){
+		empezar.addActionListener(this);
+		tortugas.addActionListener(this);
+		liebres.addActionListener(this);
+	}
 	public void paint(Graphics g) {
-		g.drawImage(rutinas.obtenerImagen("./fondoM.jpg"), 0, 0, null);
-		//repaint();
+		
+		Graphics2D gra = (Graphics2D) g;
+		g.drawImage(rutinas.obtenerImagen("./fondoMenu.png"), 0, 0, null);	
+		
+		g.fillRoundRect (15, 65, 70, 20, 1, 1);
+		g.setColor(Color.WHITE);
+		gra.drawString("PUENTE 1:", 18, 80);
+		gra.setColor(Color.BLACK);
+		
+		g.fillRoundRect (15, 95, 70, 20, 1, 1); 
+		g.setColor(Color.WHITE);
+		gra.drawString("PUENTE 2:", 18, 110);
+		gra.setColor(Color.BLACK);
+		
+		g.fillRoundRect (15, 125, 70, 20, 1, 1);
+		g.setColor(Color.WHITE);
+		gra.drawString("PUENTE 3:", 18, 140);
+		gra.setColor(Color.BLACK);
+		refrescar();
+	}
+	public void refrescar() {
+		tortugas.update(tortugas.getGraphics());
+		liebres.update(liebres.getGraphics());
+		empezar.update(empezar.getGraphics());
+		for(int i = 0 ; i < cajas.length ;i++ ){
+			cajas[i].update(cajas[i].getGraphics());
+		}
+		
+	}
+	public void actionPerformed(ActionEvent e) {
+		if(e.getSource() == empezar){
+			if( !(cajas[0].getText().length() == 0 || cajas[1].getText().length() == 0 ||cajas[2].getText().length() == 0 
+					|| tortugas.getSelectedIndex() < 0 || liebres.getSelectedIndex() < 0) ) {
+				int puentes [] = getContenido();
+				int NoTortugas = Integer.parseInt(""+tortugas.getSelectedItem());
+				int NoLiebres  = Integer.parseInt(""+liebres.getSelectedItem());
+				new Carrera(puentes,NoTortugas,NoLiebres);
+				return;
+			}else return;
+		}
+		if(e.getSource() == liebres || e.getSource() == tortugas){
+			repaint();
+			return;
+		}
+	}
+	public void creaCajas(){
+		cajas = new JLeeEntero[3];
+		for(int i = 0 ; i < 3 ; i++){
+			cajas[i] = new JLeeEntero();
+		}
+	}
+	public int [] getContenido(){
+		int puentes [] = new int [3];
+		for(int i = 0 ; i < cajas.length ; i++){
+			puentes[i] = Integer.parseInt(cajas[i].getText());
+		}
+		return puentes;
 	}
 }
