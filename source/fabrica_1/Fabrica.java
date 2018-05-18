@@ -18,32 +18,33 @@ public class Fabrica extends JFrame implements ActionListener {
 	// 0 - no hay robot en estacion
 	// 1 - el robot esta disponible
 	// 2 - el robot esta ocupado
-	// 3 - el robot de transmision disponible
-	// 4 - el robot de transmision ocupado
+	// 3 - el robot de transmision esta disponible
+	// 4 - el robot de transmision esta ocupado
 	int[][] robots;
 	Semaforo[] semaforos;
 	Rutinas rutinas = new Rutinas();
 	Graphics graphics;
 	Image imageBuffer;
+	Timer t;
 	Image [] img;
 	Fila[] filas;
 	JLabel [] etiquetas;
-	//int tamano = rutinas.nextInt(5,8);
-	int tamano = 7;
+	int[] segundosPorEstacion = {1,1,1,1,1,1};
+	int tamano = rutinas.nextInt(7,10);
 
 	public Fabrica() {
 		CrearInterfaz();
 	}
 
 	public void CrearInterfaz() {
-		setSize(650,(tamano*100)+50);
+		setSize(600,(tamano*80)+50);
 		setAlwaysOnTop(true);
 		setLayout(null);
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		imageBuffer = createImage(getWidth()-50,getHeight()-50);
+		imageBuffer = createImage(480,getHeight()-50);
 		graphics = imageBuffer.getGraphics();
 
 		crearRobots();
@@ -52,23 +53,30 @@ public class Fabrica extends JFrame implements ActionListener {
 		crearEtiquetas();
 		getContentPane().setBackground(Color.WHITE);
 
-		Timer t = new Timer(0, this);
+		t = new Timer(0, this);
 		t.setRepeats(true);
 		t.start();
 	}
 
 	public void paint(Graphics g) {
-		g.drawImage(imageBuffer, 0, 50, getWidth()-50, getHeight()-50, this);
 		g.setColor(Color.white);
-		g.fillRect(600, 0, 50, getHeight());
-		//g.fillRect(0, 0, getWidth(), 70);
+		g.fillRect(550, 0, 50, getHeight());
+		
+		/* Detener fabrica */
+		if (Fila.noCarros == 10) {
+			detenerFilas();
+			t.stop();
+			actualizaEtiquetas();
+		}
+		
+		g.drawImage(imageBuffer, 0, 50, 480, getHeight()-50, this);
 	}
 
 	public void crearFilas() {
 		filas = new Fila[tamano];
 
 		for(int i = 0; i < filas.length; i++) {
-			filas[i] = new Fila(i,graphics,robots,semaforos);
+			filas[i] = new Fila(i,graphics,robots,semaforos,segundosPorEstacion);
 		}
 
 		pintarRobots();
@@ -83,11 +91,11 @@ public class Fabrica extends JFrame implements ActionListener {
 		repaint();
 	}
 
-	public void crearEtiquetas(){
+	public void crearEtiquetas() {
 		etiquetas = new JLabel [filas.length];
 		for(int i = 0 ; i < filas.length ; i++){
 			etiquetas[i] = new JLabel("0");
-			etiquetas[i].setBounds(620, (i*100)+20, 100, 100);
+			etiquetas[i].setBounds(550, (i*80)+20, 100, 100);
 			etiquetas[i].setVisible(true);
 			add(etiquetas[i]);
 		}
@@ -115,9 +123,9 @@ public class Fabrica extends JFrame implements ActionListener {
 		for(int i = 0; i < robots.length; i++) {
 			for(int j = 0; j < robots[i].length; j++) {
 				if(robots[i][j] == 1) {
-					graphics.drawImage(imagenRobot, i*100, (j*100)+10, null);
+					graphics.drawImage(imagenRobot, i*80, j*80, null);
 				} else if(robots[i][j] == 3) {
-					graphics.drawImage(imagenRobotTrans, i*100, (j*100)+10, null);
+					graphics.drawImage(imagenRobotTrans, i*80, j*80, null);
 				}
 			}
 		}
@@ -135,8 +143,7 @@ public class Fabrica extends JFrame implements ActionListener {
 						robots[i][j] = 1;
 					} else {
 						robots[i][j] = 3;
-					}
-					
+					}				
 				} else if ((i == 2 || i == 3 || i == 4) && j < 3) {
 					robots[i][j] = 1;
 				} else if (i == 5 && j < robotsEstacion) {
@@ -145,6 +152,12 @@ public class Fabrica extends JFrame implements ActionListener {
 					robots[i][j] = 0;
 				}
 			}
+		}
+	}
+	
+	public void detenerFilas() {
+		for(int i = 0; i < filas.length; i++) {
+			filas[i].setEstaFabricando(false);
 		}
 	}
 
