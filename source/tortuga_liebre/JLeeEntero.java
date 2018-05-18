@@ -4,18 +4,18 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 public class JLeeEntero extends JTextField implements KeyListener,FocusListener{
-	private int Tamaño;
+	private int Tamano;
 	private Color c;
 	public JLeeEntero(){
 		this(5);
 	}
-	public JLeeEntero(int Tamaño){
-		super(Tamaño);
-		this.Tamaño=Tamaño;
+	public JLeeEntero(int Tamano){
+		super(Tamano);
+		this.Tamano=Tamano;
 		c=getBackground();
 		addKeyListener(this);
 		addFocusListener(this);
-		getDropTarget().setActive(false); //Evita que se arrastre información a la caja de texto
+		getDropTarget().setActive(false); //Evita que se arrastre informaciï¿½n a la caja de texto
 	}
 	public long getValor(){
 		long v;
@@ -56,7 +56,7 @@ public class JLeeEntero extends JTextField implements KeyListener,FocusListener{
 	}
 	public void keyReleased(KeyEvent Evt){}
 	public void keyTyped(KeyEvent Evt){
-		if(getText().length()==Tamaño){
+		if(getText().length()==Tamano){
 			Evt.consume();
 			Toolkit.getDefaultToolkit().beep();
 			return;
