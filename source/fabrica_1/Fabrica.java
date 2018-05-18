@@ -9,6 +9,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 @SuppressWarnings("serial")
@@ -25,12 +26,14 @@ public class Fabrica extends JFrame implements ActionListener {
 	Rutinas rutinas = new Rutinas();
 	Graphics graphics;
 	Image imageBuffer;
+	BufferedImage imagenEstaciones;
 	Timer t;
 	Image [] img;
 	Fila[] filas;
 	JLabel [] etiquetas;
 	int[] segundosPorEstacion = {1,1,1,1,1,1};
-	int tamano = rutinas.nextInt(7,10);
+	int tamano = rutinas.nextInt(7,9);
+	int limiteCarros = 10;
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -44,8 +47,10 @@ public class Fabrica extends JFrame implements ActionListener {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		imageBuffer = createImage(480,getHeight()-50);
+		imageBuffer = createImage(480,getHeight());
 		graphics = imageBuffer.getGraphics();
+		imagenEstaciones = rutinas.obtenerImagen("./estaciones.png");
+		graphics.drawImage(imagenEstaciones, 0, 20, 480, 50, this);
 
 		crearRobots();
 		inicializarSemaforos();
@@ -60,16 +65,19 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void paint(Graphics g) {
 		g.setColor(Color.white);
-		g.fillRect(550, 0, 50, getHeight());
+		g.fillRect(550, 0, 10, getHeight());
 		
 		/* Detener fabrica */
-		if (Fila.noCarros == 10) {
+		if (Fila.noCarros >= limiteCarros) {
 			detenerFilas();
 			t.stop();
 			actualizaEtiquetas();
+			dispose();
+			JOptionPane.showMessageDialog(null, "Jornada finalizada con " + Fila.noCarros + " carros");
 		}
 		
-		g.drawImage(imageBuffer, 0, 50, 480, getHeight()-50, this);
+		g.drawImage(imageBuffer, 0, 0, 480, getHeight(), this);
+		
 	}
 
 	public void crearFilas() {
@@ -95,7 +103,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		etiquetas = new JLabel [filas.length];
 		for(int i = 0 ; i < filas.length ; i++){
 			etiquetas[i] = new JLabel("0");
-			etiquetas[i].setBounds(550, (i*80)+20, 100, 100);
+			etiquetas[i].setBounds(550, (i*80)+30, 100, 100);
 			etiquetas[i].setVisible(true);
 			add(etiquetas[i]);
 		}
@@ -123,9 +131,9 @@ public class Fabrica extends JFrame implements ActionListener {
 		for(int i = 0; i < robots.length; i++) {
 			for(int j = 0; j < robots[i].length; j++) {
 				if(robots[i][j] == 1) {
-					graphics.drawImage(imagenRobot, i*80, j*80, null);
+					graphics.drawImage(imagenRobot, i*80, (j*80)+50, null);
 				} else if(robots[i][j] == 3) {
-					graphics.drawImage(imagenRobotTrans, i*80, j*80, null);
+					graphics.drawImage(imagenRobotTrans, i*80, (j*80)+50, null);
 				}
 			}
 		}

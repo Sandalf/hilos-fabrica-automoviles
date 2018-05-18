@@ -124,7 +124,7 @@ public class Fila extends Thread {
 	public void pintarFila() {
 		for(int i = 0; i < robots.length; i++) {
 			for(int j = 0 ; j < robots[0].length; j++){		
-				graphics.drawImage(imagenDefault, i*80, j*80, null);
+				graphics.drawImage(imagenDefault, i*80, (j*80)+50, null);
 			}
 		}
 	}
@@ -152,29 +152,29 @@ public class Fila extends Thread {
 	}
 
 	public void pintarEstacionCarro(int estacion, int fila) {
-		graphics.drawImage(imagenDefault, estacion*80, fila*80, null); 
-		graphics.drawImage(imagenRobot, estacion*80, fila*80, null);
-		graphics.drawImage(etapasCarro[estacion], estacion*80, fila*80, null);
+		graphics.drawImage(imagenDefault, estacion*80, (fila*80)+50, null); 
+		graphics.drawImage(imagenRobot, estacion*80, (fila*80)+50, null);
+		graphics.drawImage(etapasCarro[estacion], estacion*80, (fila*80)+50, null);
 	}
 
 	public void pintarEstacionVacia(int estacion, int fila) {
-		graphics.drawImage(imagenDefault, estacion*80, fila*80, null);
+		graphics.drawImage(imagenDefault, estacion*80, (fila*80)+50, null);
 	}
 
 	public void pintarEstacionRobot(int estacion, int fila) {
-		graphics.drawImage(imagenDefault, estacion*80, fila*80, null);
-		graphics.drawImage(imagenRobot, estacion*80, (fila*80), null);
+		graphics.drawImage(imagenDefault, estacion*80, (fila*80)+50, null);
+		graphics.drawImage(imagenRobot, estacion*80, (fila*80)+50, null);
 	}
 	
 	public void pintarEstacionRobotTransmision(int estacion, int fila) {
-		graphics.drawImage(imagenDefault, estacion*80, fila*80, null);
-		graphics.drawImage(imagenRobotTrans, estacion*80, fila*80, null);
+		graphics.drawImage(imagenDefault, estacion*80, (fila*80)+50, null);
+		graphics.drawImage(imagenRobotTrans, estacion*80, (fila*80)+50, null);
 	}
 	
 	public void pintarEstacionCarroTransmision(int estacion, int fila) {
-		graphics.drawImage(imagenDefault, estacion*80, fila*80, null); 
-		graphics.drawImage(imagenRobotTrans, estacion*80, fila*80, null);
-		graphics.drawImage(etapasCarro[estacion], estacion*80, fila*80, null);
+		graphics.drawImage(imagenDefault, estacion*80, (fila*80)+50, null); 
+		graphics.drawImage(imagenRobotTrans, estacion*80, (fila*80)+50, null);
+		graphics.drawImage(etapasCarro[estacion], estacion*80, (fila*80)+50, null);
 	}
 	
 	public void agregarTransmision(int estacion, int fila) throws InterruptedException {
