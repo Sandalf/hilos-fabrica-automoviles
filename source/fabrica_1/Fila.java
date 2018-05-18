@@ -19,15 +19,17 @@ public class Fila extends Thread {
 	private static Semaforo[] semaforos;
 	private boolean estaFabricando = true;
 	private static int[] segundosPorEstacion = {1,2,1,2,1,2};
-	private static int [] NoCarros;
+	private static int noCarros = 0;
 	private Rutinas rutinas = new Rutinas();
-	private int estacionVacia = 0;
-	private int robotLibre = 1;
-	private int robotOcupado = 2;
-	private int robotTransmisionLibre = 3;
-	private int robotTransmisionOcupado = 4;
+	private static int estacionVacia = 0;
+	private static int robotLibre = 1;
+	private static int robotOcupado = 2;
+	private static int robotTransmisionLibre = 3;
+	private static int robotTransmisionOcupado = 4;
+	static Semaforo semNumCarros = new Semaforo(1);
+	private int numCarroFabricando = 0;
 
-	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos, int TamNoCarros) {
+	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos) {
 		this.graphics = g;
 		this.filaID = id;
 		this.robots = robots;
@@ -36,7 +38,6 @@ public class Fila extends Thread {
 		this.imagenDefault = rutinas.obtenerImagen("./cinta.jpg");
 		this.imagenRobotTrans = rutinas.obtenerImagen("./robot-trans.png");
 		this.etapasCarro = inicializarEtapasCarro();
-		this.NoCarros = new int [TamNoCarros];
 		pintarFila();
 	}
 
@@ -61,32 +62,34 @@ public class Fila extends Thread {
 					pintarEstacionCarro(estacion,filaID);
 					sleep(segundosPorEstacion[estacion]*1000);
 					pintarEstacionRobot(estacion, filaID);
-					robots[estacion][filaID] = robotLibre;
+					robots[estacion][filaID] = robotLibre;					
 					/* Estacion Moto-Transmision */
 					if(estacion == 1) {
-						int filaRobotTransDisponible = obtenerFilaRobotTransmisionDisponible(estacion);
-						if(robots[estacion][filaID] == robotTransmisionLibre) {
-							robots[estacion][filaID] = robotTransmisionOcupado;
-							pintarEstacionCarroTransmision(estacion,filaID);
-							sleep(segundosPorEstacion[estacion]*1000);
-							pintarEstacionRobotTransmision(estacion,filaID);
-						} else if (filaRobotTransDisponible > -1) {
-							robots[estacion][filaRobotTransDisponible] = estacionVacia;
-							robots[estacion][filaID] = robotTransmisionOcupado;
-							pintarEstacionVacia(estacion,filaRobotTransDisponible);
-							pintarEstacionCarroTransmision(estacion,filaID);
-							sleep(segundosPorEstacion[estacion]*1000);
-							pintarEstacionRobotTransmision(estacion,filaID);
-						}
+						agregarTransmision(estacion,filaID);
 					}					
 				} else if (filaRobotDisponible > -1) {
-					robots[estacion][filaRobotDisponible] = estacionVacia;
-					robots[estacion][filaID] = robotOcupado;
-					pintarEstacionVacia(estacion,filaRobotDisponible);
-					pintarEstacionCarro(estacion,filaID);
-					sleep(segundosPorEstacion[estacion]*1000);
-					pintarEstacionRobot(estacion, filaID);
-					robots[estacion][filaID] = robotLibre;
+					if(estacion == 1 && robots[estacion][filaID] == robotTransmisionLibre) {
+						agregarTransmision(estacion,filaID);
+						robots[estacion][filaRobotDisponible] = robotTransmisionLibre;
+						robots[estacion][filaID] = robotOcupado;
+						pintarEstacionCarroTransmision(estacion,filaRobotDisponible);	
+						pintarEstacionCarro(estacion,filaID);
+						sleep(segundosPorEstacion[estacion]*1000);
+						pintarEstacionRobot(estacion, filaRobotDisponible);
+						robots[estacion][filaID] = robotLibre;
+					} else {
+						robots[estacion][filaRobotDisponible] = estacionVacia;
+						robots[estacion][filaID] = robotOcupado;
+						pintarEstacionVacia(estacion,filaRobotDisponible);
+						pintarEstacionCarro(estacion,filaID);
+						sleep(segundosPorEstacion[estacion]*1000);
+						pintarEstacionRobot(estacion, filaID);					
+						robots[estacion][filaID] = robotLibre;						
+					}
+					
+					if(estacion == 1) {
+						agregarTransmision(estacion,filaID);
+					}
 				} else {
 					semaforos[estacion].libera();
 					continue;
@@ -95,7 +98,10 @@ public class Fila extends Thread {
 
 				if(estacion == 5) {
 					estaFabricando = false;
-					NoCarros(estacion,filaID);
+					semNumCarros.espera();
+					noCarros++;
+					numCarroFabricando=noCarros;
+					semNumCarros.libera();
 				}
 				estacion++;
 			}
@@ -113,9 +119,9 @@ public class Fila extends Thread {
 	}
 
 	public void pintarFila() {
-		for(int i = 0; i < NoCarros.length; i++) {
-			for(int j = 0 ; j < 6 ; j++){		
-				graphics.drawImage(imagenDefault, j*100, i*100, null);
+		for(int i = 0; i < robots.length; i++) {
+			for(int j = 0 ; j < robots[0].length; j++){		
+				graphics.drawImage(imagenDefault, i*100, j*100, null);
 			}
 		}
 	}
@@ -138,14 +144,8 @@ public class Fila extends Thread {
 		return -1;	
 	}
 
-	public synchronized void NoCarros(int estacion,int pos) {
-		if(estacion == 5){
-			NoCarros[pos]++;
-		}
-	}
-
-	public String getNoCarros(int pos){
-		return NoCarros[pos]+"";
+	public String getNoCarro(){
+		return numCarroFabricando+"";
 	}
 
 	public void pintarEstacionCarro(int estacion, int fila) {
@@ -172,6 +172,35 @@ public class Fila extends Thread {
 		graphics.drawImage(imagenDefault, estacion*100, fila*100, null); 
 		graphics.drawImage(imagenRobotTrans, estacion*100, (fila*100)+10, null);
 		graphics.drawImage(etapasCarro[estacion], estacion*100, fila*100, null);
+	}
+	
+	public void agregarTransmision(int estacion, int fila) throws InterruptedException {
+		int filaRobotTransDisponible = obtenerFilaRobotTransmisionDisponible(estacion);
+		if(robots[estacion][fila] == robotTransmisionLibre) {
+			robots[estacion][fila] = robotTransmisionOcupado;
+			pintarEstacionCarroTransmision(estacion,fila);
+			sleep(segundosPorEstacion[estacion]*1000);
+			pintarEstacionRobotTransmision(estacion,fila);
+		} else if (filaRobotTransDisponible > -1) {
+			/* Validar cuando el carro este en una estacion con robot normal libre */
+			if (robots[estacion][fila] == robotLibre) {
+				robots[estacion][filaRobotTransDisponible] = robotLibre;
+				pintarEstacionRobot(estacion, filaRobotTransDisponible);
+				robots[estacion][fila] = robotTransmisionOcupado;
+				pintarEstacionCarroTransmision(estacion,fila);
+				sleep(segundosPorEstacion[estacion]*1000);
+				pintarEstacionRobotTransmision(estacion,fila);
+				robots[estacion][fila] = robotTransmisionLibre;
+			} else {
+				robots[estacion][filaRobotTransDisponible] = estacionVacia;
+				robots[estacion][fila] = robotTransmisionOcupado;
+				pintarEstacionVacia(estacion,filaRobotTransDisponible);
+				pintarEstacionCarroTransmision(estacion,fila);
+				sleep(segundosPorEstacion[estacion]*1000);
+				pintarEstacionRobotTransmision(estacion,fila);
+				robots[estacion][fila] = robotTransmisionLibre;
+			}
+		}
 	}
 
 }

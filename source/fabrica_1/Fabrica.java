@@ -29,7 +29,7 @@ public class Fabrica extends JFrame implements ActionListener {
 	Fila[] filas;
 	JLabel [] etiquetas;
 	//int tamano = rutinas.nextInt(5,8);
-	int tamano = 6;
+	int tamano = 7;
 
 	public Fabrica() {
 		CrearInterfaz();
@@ -68,7 +68,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		filas = new Fila[tamano];
 
 		for(int i = 0; i < filas.length; i++) {
-			filas[i] = new Fila(i,graphics,robots,semaforos,filas.length);
+			filas[i] = new Fila(i,graphics,robots,semaforos);
 		}
 
 		pintarRobots();
@@ -102,7 +102,7 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void actualizaEtiquetas(){	
 		for(int i = 0 ; i < etiquetas.length ; i++) {
-			etiquetas[i].setText(filas[i].getNoCarros(i));
+			etiquetas[i].setText(filas[i].getNoCarro());
 			for(int j = 0 ; j < 4 ; j++) {
 				etiquetas[i].update(etiquetas[i].getGraphics());
 			}
