@@ -33,7 +33,7 @@ public class Fabrica extends JFrame implements ActionListener {
 	JLabel [] etiquetas;
 	int[] segundosPorEstacion = {1,1,1,1,1,1};
 	int tamano = 7;//rutinas.nextInt(7,9);
-	int limiteCarros = 10;
+	int limiteCarros = 100;
 
 	public Fabrica() {
 		CrearInterfaz();
