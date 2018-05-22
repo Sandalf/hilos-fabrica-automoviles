@@ -44,6 +44,8 @@ public class Fila extends Thread {
 	}
 
 	public static Semaforo sem = new Semaforo(1);
+	public static Semaforo sem2 = new Semaforo(2);
+	public static Semaforo wh = new Semaforo(1);
 
 	public BufferedImage[] inicializarEtapasCarro() {
 		BufferedImage[] etapas = new BufferedImage[nomImg.length];	
@@ -56,57 +58,99 @@ public class Fila extends Thread {
 	public void run() {
 		try {
 			int estacion = 0;
-			while(estaFabricando){
-				semaforos[estacion].espera();
-				int filaRobotDisponible = obtenerFilaRobotDisponible(estacion);
-				if(robots[estacion][filaID] == robotLibre) {
-					robots[estacion][filaID] = robotOcupado;				
-					pintarEstacionCarro(estacion,filaID);
-					sleep(segundosPorEstacion[estacion]*1000);
-					pintarEstacionRobot(estacion, filaID);
-					robots[estacion][filaID] = robotLibre;					
-					/* Estacion Moto-Transmision */
-					if(estacion == 1) {
-						agregarTransmision(estacion,filaID);
-					}					
-				} else if (filaRobotDisponible > -1) {
-					if(estacion == 1 && robots[estacion][filaID] == robotTransmisionLibre) {
-						agregarTransmision(estacion,filaID);
-						robots[estacion][filaRobotDisponible] = robotTransmisionLibre;
-						robots[estacion][filaID] = robotOcupado;
-						pintarEstacionCarroTransmision(estacion,filaRobotDisponible);	
-						pintarEstacionCarro(estacion,filaID);
-						sleep(segundosPorEstacion[estacion]*1000);
-						pintarEstacionRobot(estacion, filaRobotDisponible);
-						robots[estacion][filaID] = robotLibre;
-					} else {
-						robots[estacion][filaRobotDisponible] = estacionVacia;
-						robots[estacion][filaID] = robotOcupado;
-						pintarEstacionVacia(estacion,filaRobotDisponible);
-						pintarEstacionCarro(estacion,filaID);
-						sleep(segundosPorEstacion[estacion]*1000);
-						pintarEstacionRobot(estacion, filaID);					
-						robots[estacion][filaID] = robotLibre;						
-					}
-					/* Estacion Moto-Transmision */
-					if(estacion == 1) {
-						agregarTransmision(estacion,filaID);
-					}
-				} else {
-					semaforos[estacion].libera();
-					continue;
-				}
-				semaforos[estacion].libera();
-
-				if(estacion == 5) {
+			wh.espera();
+			while(noCarros <= 10){
+				wh.libera();
+				
+				semaforos[0].espera();
+				estacion1(estacion,filaID);
+				semaforos[0].libera();
+				
+				//SIN este semaforo se hace la estacion 2 en todas las estaciones
+				sem2.espera();
+				if(estacion == 1)
+				estacion2(estacion,filaID);
+				sem2.libera();
+				
+				estacion3(estacion,filaID);
+				estacion4(estacion,filaID);
+				estacion5(estacion,filaID);
+				estacion6(estacion,filaID);
+				
+				sem.espera();
+				estacion++;
+				sem.libera();
+				
+				sem.espera();
+				if(estacion==6){
+					//noCarros++;
 					estacion = 0;
 					semNumCarros.espera();
 					noCarros++;
 					numCarroFabricando=noCarros;
 					semNumCarros.libera();
-				} else {
-					estacion++;
-				}			
+				}
+				sem.libera();
+				
+//				if(estacion == 5) {
+//				semNumCarros.espera();
+//				noCarros++;
+//				numCarroFabricando=noCarros;
+//				semNumCarros.libera();
+//				} //else {
+//				estacion++;
+//			}	
+				
+//				semaforos[estacion].espera();
+//				int filaRobotDisponible = obtenerFilaRobotDisponible(estacion);
+//				if(robots[estacion][filaID] == robotLibre) {
+//					robots[estacion][filaID] = robotOcupado;				
+//					pintarEstacionCarro(estacion,filaID);
+//					sleep(segundosPorEstacion[estacion]*1000);
+//					pintarEstacionRobot(estacion, filaID);
+//					robots[estacion][filaID] = robotLibre;					
+//					/* Estacion Moto-Transmision */
+//					if(estacion == 1) {
+//						agregarTransmision(estacion,filaID);
+//					}					
+//				} else if (filaRobotDisponible > -1) {
+//					if(estacion == 1 && robots[estacion][filaID] == robotTransmisionLibre) {
+//						agregarTransmision(estacion,filaID);
+//						robots[estacion][filaRobotDisponible] = robotTransmisionLibre;
+//						robots[estacion][filaID] = robotOcupado;
+//						pintarEstacionCarroTransmision(estacion,filaRobotDisponible);	
+//						pintarEstacionCarro(estacion,filaID);
+//						sleep(segundosPorEstacion[estacion]*1000);
+//						pintarEstacionRobot(estacion, filaRobotDisponible);
+//						robots[estacion][filaID] = robotLibre;
+//					} else {
+//						robots[estacion][filaRobotDisponible] = estacionVacia;
+//						robots[estacion][filaID] = robotOcupado;
+//						pintarEstacionVacia(estacion,filaRobotDisponible);
+//						pintarEstacionCarro(estacion,filaID);
+//						sleep(segundosPorEstacion[estacion]*1000);
+//						pintarEstacionRobot(estacion, filaID);					
+//						robots[estacion][filaID] = robotLibre;						
+//					}
+//					/* Estacion Moto-Transmision */
+//					if(estacion == 1) {
+//						agregarTransmision(estacion,filaID);
+//					}
+//				} else {
+//					semaforos[estacion].libera();
+//					continue;
+//				}
+//				semaforos[estacion].libera();
+//
+//				if(estacion == 5) {
+//					estacion = 0;
+//					semNumCarros.espera();
+//					noCarros++;
+//					numCarroFabricando=noCarros;
+//					semNumCarros.libera();
+//				} else {
+//					estacion++;
+//				}			
 			}
 
 		} catch (InterruptedException e) {
@@ -129,23 +173,23 @@ public class Fila extends Thread {
 		}
 	}
 
-	public int obtenerFilaRobotDisponible(int estacion) {
-		for(int j = 0; j < robots[0].length; j++) {
-			if(robots[estacion][j] == robotLibre) {
-				return j;
-			}
-		}
-		return -1;	
-	}
-	
-	public int obtenerFilaRobotTransmisionDisponible(int estacion) {
-		for(int j = 0; j < robots[0].length; j++) {
-			if(robots[estacion][j] == robotTransmisionLibre) {
-				return j;
-			}
-		}
-		return -1;	
-	}
+//	public int obtenerFilaRobotDisponible(int estacion) {
+//		for(int j = 0; j < robots[0].length; j++) {
+//			if(robots[estacion][j] == robotLibre) {
+//				return j;
+//			}
+//		}
+//		return -1;	
+//	}
+//	
+//	public int obtenerFilaRobotTransmisionDisponible(int estacion) {
+//		for(int j = 0; j < robots[0].length; j++) {
+//			if(robots[estacion][j] == robotTransmisionLibre) {
+//				return j;
+//			}
+//		}
+//		return -1;	
+//	}
 
 	public String getNoCarro(){
 		return numCarroFabricando+"";
@@ -177,41 +221,100 @@ public class Fila extends Thread {
 		graphics.drawImage(etapasCarro[estacion], estacion*80, (fila*80)+50, null);
 	}
 	
-	public void agregarTransmision(int estacion, int fila) throws InterruptedException {
-		int filaRobotTransDisponible = obtenerFilaRobotTransmisionDisponible(estacion);
-		if(robots[estacion][fila] == robotTransmisionLibre) {
-			robots[estacion][fila] = robotTransmisionOcupado;
-			pintarEstacionCarroTransmision(estacion,fila);
-			sleep(segundosPorEstacion[estacion]*1000);
-			pintarEstacionRobotTransmision(estacion,fila);
-		} else if (filaRobotTransDisponible > -1) {
-			/* Validar cuando el carro este en una estacion con robot normal libre */
-			if (robots[estacion][fila] == robotLibre) {
-				robots[estacion][filaRobotTransDisponible] = robotLibre;
-				pintarEstacionRobot(estacion, filaRobotTransDisponible);
-				robots[estacion][fila] = robotTransmisionOcupado;
-				pintarEstacionCarroTransmision(estacion,fila);
-				sleep(segundosPorEstacion[estacion]*1000);
-				pintarEstacionRobotTransmision(estacion,fila);
-				robots[estacion][fila] = robotTransmisionLibre;
-			} else {
-				robots[estacion][filaRobotTransDisponible] = estacionVacia;
-				robots[estacion][fila] = robotTransmisionOcupado;
-				pintarEstacionVacia(estacion,filaRobotTransDisponible);
-				pintarEstacionCarroTransmision(estacion,fila);
-				sleep(segundosPorEstacion[estacion]*1000);
-				pintarEstacionRobotTransmision(estacion,fila);
-				robots[estacion][fila] = robotTransmisionLibre;
-			}
-		}
-	}
+//	public void agregarTransmision(int estacion, int fila) throws InterruptedException {
+//		int filaRobotTransDisponible = obtenerFilaRobotTransmisionDisponible(estacion);
+//		if(robots[estacion][fila] == robotTransmisionLibre) {
+//			robots[estacion][fila] = robotTransmisionOcupado;
+//			pintarEstacionCarroTransmision(estacion,fila);
+//			sleep(segundosPorEstacion[estacion]*1000);
+//			pintarEstacionRobotTransmision(estacion,fila);
+//		} else if (filaRobotTransDisponible > -1) {
+//			/* Validar cuando el carro este en una estacion con robot normal libre */
+//			if (robots[estacion][fila] == robotLibre) {
+//				robots[estacion][filaRobotTransDisponible] = robotLibre;
+//				pintarEstacionRobot(estacion, filaRobotTransDisponible);
+//				robots[estacion][fila] = robotTransmisionOcupado;
+//				pintarEstacionCarroTransmision(estacion,fila);
+//				sleep(segundosPorEstacion[estacion]*1000);
+//				pintarEstacionRobotTransmision(estacion,fila);
+//				robots[estacion][fila] = robotTransmisionLibre;
+//			} else {
+//				robots[estacion][filaRobotTransDisponible] = estacionVacia;
+//				robots[estacion][fila] = robotTransmisionOcupado;
+//				pintarEstacionVacia(estacion,filaRobotTransDisponible);
+//				pintarEstacionCarroTransmision(estacion,fila);
+//				sleep(segundosPorEstacion[estacion]*1000);
+//				pintarEstacionRobotTransmision(estacion,fila);
+//				robots[estacion][fila] = robotTransmisionLibre;
+//			}
+//		}
+//	}
 
-	public boolean isEstaFabricando() {
-		return estaFabricando;
+//	public boolean isEstaFabricando() {
+//		return estaFabricando;
+//	}
+//
+//	public void setEstaFabricando(boolean estaFabricando) {
+//		this.estaFabricando = estaFabricando;
+//	}
+	
+	public void estacion1(int estacion , int fila) throws InterruptedException{//creo que se puede quitar la fila
+		semaforos[0].espera();
+		pintarEstacionCarro(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionRobot(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		estacion++;
+		semaforos[0].libera();
 	}
-
-	public void setEstaFabricando(boolean estaFabricando) {
-		this.estaFabricando = estaFabricando;
+	
+	public void estacion2(int estacion , int fila) throws InterruptedException {
+		semaforos[1].espera();
+		pintarEstacionCarro(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		semaforos[2].espera();
+		pintarEstacionCarroTransmision(estacion,fila);
+		
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionRobotTransmision(estacion,fila);
+		semaforos[1].libera();
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		
+	}
+	
+	public void estacion3(int estacion, int fila) throws InterruptedException {
+		semaforos[3].espera();
+		semaforos[2].libera();
+		pintarEstacionCarro(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		semaforos[3].libera();
+	}
+	public void estacion4(int estacion, int fila) throws InterruptedException {
+		semaforos[4].espera();
+		pintarEstacionCarro(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		semaforos[4].libera();
+	}
+	
+	public void estacion5(int estacion , int fila) throws InterruptedException { 
+		semaforos[5].espera();
+		pintarEstacionCarro(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		semaforos[5].libera();
+	}
+	public void estacion6(int estacion , int fila) throws InterruptedException{
+		semaforos[6].espera();
+		pintarEstacionCarro(estacion,fila);
+		sleep(segundosPorEstacion[estacion]*1000);
+		pintarEstacionVacia(estacion,fila);
+		semaforos[6].libera();
+		
 	}
 
 }

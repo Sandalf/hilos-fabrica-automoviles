@@ -32,7 +32,7 @@ public class Fabrica extends JFrame implements ActionListener {
 	Fila[] filas;
 	JLabel [] etiquetas;
 	int[] segundosPorEstacion = {1,1,1,1,1,1};
-	int tamano = rutinas.nextInt(7,9);
+	int tamano = 7;//rutinas.nextInt(7,9);
 	int limiteCarros = 10;
 
 	public Fabrica() {
@@ -69,7 +69,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		
 		/* Detener fabrica */
 		if (Fila.noCarros >= limiteCarros) {
-			detenerFilas();
+			//detenerFilas();
 			t.stop();
 			actualizaEtiquetas();
 			dispose();
@@ -86,9 +86,7 @@ public class Fabrica extends JFrame implements ActionListener {
 		for(int i = 0; i < filas.length; i++) {
 			filas[i] = new Fila(i,graphics,robots,semaforos,segundosPorEstacion);
 		}
-
-		pintarRobots();
-
+		//pintarRobots();
 		for(int i = 0; i < filas.length; i++) {
 			filas[i].start();
 		}
@@ -110,9 +108,16 @@ public class Fabrica extends JFrame implements ActionListener {
 	}
 
 	public void inicializarSemaforos() {
-		this.semaforos = new Semaforo[robots.length];
-		for(int i = 0; i < robots.length; i++) {
-			semaforos[i] = new Semaforo(1);
+		this.semaforos = new Semaforo[7];
+		semaforos[0] = new Semaforo(5);
+		semaforos[1] = new Semaforo(4);
+		semaforos[2] = new Semaforo(2);
+		for(int i = 3 ; i < semaforos.length;i++){
+			semaforos[i] = new Semaforo(3);
+			if(i <= 5 ){
+				semaforos[5] = new Semaforo(tamano);
+				semaforos[6] = new Semaforo(tamano);
+			}	
 		}
 	}
 
@@ -163,10 +168,12 @@ public class Fabrica extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void detenerFilas() {
-		for(int i = 0; i < filas.length; i++) {
-			filas[i].setEstaFabricando(false);
-		}
-	}
+	
+	
+//	public void detenerFilas() {
+//		for(int i = 0; i < filas.length; i++) {
+//			filas[i].setEstaFabricando(false);
+//		}
+//	}
 
 }
