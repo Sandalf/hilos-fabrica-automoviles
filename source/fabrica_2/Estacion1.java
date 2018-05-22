@@ -1,24 +1,15 @@
 package fabrica_2;
 
-public class Estacion1 extends Thread {
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
-	private int linea;
-	private int estacion;
-	private Estacion2 siguienteEstacion;
-	
-	static Semaforo semaforo;
-	static Semaforo semNumCarros;
-	static int limiteCarros;
-	static int carrosFabricados;
+import fabrica_1.Rutinas;
 
-	public Estacion1(int linea, int estacion, Semaforo semaforo, Semaforo semNumCarros, int limiteCarros,int carrosFabricados, Estacion2 siguienteEstacion) {
-		this.linea = linea;
-		this.estacion = estacion;
-		this.siguienteEstacion = siguienteEstacion;
-		this.semaforo = semaforo;
-		this.semNumCarros = semNumCarros;
-		this.limiteCarros = limiteCarros;
-		this.carrosFabricados = carrosFabricados;
+public class Estacion1 extends Estacion {
+
+	public Estacion1(Graphics g, int linea, int estacion, Semaforo semaforo, Semaforo semNumCarros, int limiteCarros,
+			int carrosFabricados, Estacion siguienteEstacion) {
+		super(g, linea, estacion, semaforo, semNumCarros, limiteCarros, carrosFabricados, siguienteEstacion);
 	}
 
 	public void run() {
@@ -26,9 +17,9 @@ public class Estacion1 extends Thread {
 			while(!limiteFabricacionAlcanzada()) {
 				semNumCarros.libera();
 				semaforo.espera();
-				System.out.println("("+linea+","+estacion+") Fabricando");
-				sleep(1000);			
-				System.out.println("("+linea+","+estacion+") Terminado");
+				pintarEstacionCarro(0,linea);
+				sleep(1000);		
+				pintarEstacionVacia(0,linea);
 				semaforo.libera();
 				siguienteEstacion.setActivo(true);
 				
@@ -36,11 +27,6 @@ public class Estacion1 extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-	}
-
-	private boolean limiteFabricacionAlcanzada() {
-		semNumCarros.espera();
-		return carrosFabricados >= limiteCarros ? true : false;
 	}
 
 }

@@ -1,25 +1,23 @@
 package fabrica_2;
 
-public class Estacion2 extends Thread {
+import java.awt.Graphics;
+import java.awt.image.BufferedImage;
 
-	private int linea;
-	private int estacion;
-	private boolean activo;
-	private Estacion3 siguienteEstacion;
+import fabrica_1.Rutinas;
+
+public class Estacion2 extends Estacion {
+
+	private BufferedImage imagenRobotTrans;
+
+	static Semaforo semaMotor;
+	static Semaforo semTransmision = new Semaforo(2);
 	
-	static Semaforo semaforo;
-	static Semaforo semNumCarros;
-	static int limiteCarros;
-	static int carrosFabricados;
-
-	public Estacion2(int linea, int estacion, Semaforo semaforo, Semaforo semNumCarros, int limiteCarros,int carrosFabricados, Estacion3 siguienteEstacion) {
-		this.linea = linea;
-		this.estacion = estacion;
-		this.siguienteEstacion = siguienteEstacion;
-		this.semaforo = semaforo;
-		this.semNumCarros = semNumCarros;
-		this.limiteCarros = limiteCarros;
-		this.carrosFabricados = carrosFabricados;
+	public Estacion2(Graphics g, int linea, int estacion, Semaforo semaforo, Semaforo semNumCarros, int limiteCarros,
+			int carrosFabricados, Estacion siguienteEstacion) {
+		super(g, linea, estacion, semaforo, semNumCarros, limiteCarros, carrosFabricados, siguienteEstacion);
+		this.imagenCarro = rutinas.obtenerImagen("./chMotor.png");
+		this.imagenRobotTrans = rutinas.obtenerImagen("./robot-trans.png");
+		this.semaMotor = semaforo;
 	}
 
 	public void run() {
@@ -27,11 +25,15 @@ public class Estacion2 extends Thread {
 			while(!limiteFabricacionAlcanzada()) {
 				semNumCarros.libera();
 				if(activo) {				
-					semaforo.espera();
-					System.out.println("("+linea+","+estacion+") Fabricando");				
-					sleep(1000);			
-					System.out.println("("+linea+","+estacion+") Terminado");
-					semaforo.libera();
+					semaMotor.espera();
+					pintarEstacionCarro(1,linea);		
+					sleep(1000);
+					semTransmision.espera();
+					semaMotor.libera();		
+					pintarEstacionCarroTransmision(1,linea);									
+					sleep(1000);	
+					pintarEstacionVacia(1,linea);
+					semTransmision.libera();
 					setActivo(false);
 					siguienteEstacion.setActivo(true);
 				}			
@@ -41,13 +43,10 @@ public class Estacion2 extends Thread {
 		}
 	}
 
-	private boolean limiteFabricacionAlcanzada() {
-		semNumCarros.espera();
-		return carrosFabricados >= limiteCarros ? true : false;
+	public void pintarEstacionCarroTransmision(int estacion, int fila) {
+		graphics.drawImage(imagenDefault, estacion*80, (fila*80)+50, null); 
+		graphics.drawImage(imagenRobotTrans, estacion*80, (fila*80)+50, null);
+		graphics.drawImage(imagenCarro, estacion*80, (fila*80)+50, null);
 	}
-	
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-	
+
 }

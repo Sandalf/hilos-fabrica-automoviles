@@ -5,12 +5,12 @@ import java.awt.image.BufferedImage;
 
 import fabrica_1.Rutinas;
 
-public class Estacion3 extends Estacion {
+public class Estacion4 extends Estacion {
 
-	public Estacion3(Graphics g, int linea, int estacion, Semaforo semaforo, Semaforo semNumCarros, int limiteCarros,
+	public Estacion4(Graphics g, int linea, int estacion, Semaforo semaforo, Semaforo semNumCarros, int limiteCarros,
 			int carrosFabricados, Estacion siguienteEstacion) {
-		super(g, linea, estacion, semaforo, semNumCarros, limiteCarros, carrosFabricados, siguienteEstacion); 
-		this.imagenCarro = rutinas.obtenerImagen("./chTransmision.png");
+		super(g, linea, estacion, semaforo, semNumCarros, limiteCarros, carrosFabricados, siguienteEstacion);
+		this.imagenCarro = rutinas.obtenerImagen("./chMoTrans.png");
 	}
 
 	public void run() {
@@ -19,9 +19,9 @@ public class Estacion3 extends Estacion {
 				semNumCarros.libera();
 				if(activo) {				
 					semaforo.espera();
-					pintarEstacionCarro(2,linea);
-					sleep(1000);		
-					pintarEstacionVacia(2,linea);
+					pintarEstacionCarro(3,linea);
+					sleep(1000);	
+					pintarEstacionVacia(3,linea);
 					semaforo.libera();
 					setActivo(false);
 					siguienteEstacion.setActivo(true);
@@ -31,5 +31,5 @@ public class Estacion3 extends Estacion {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

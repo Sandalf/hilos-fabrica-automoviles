@@ -14,8 +14,7 @@ public class Fila extends Thread {
 	private BufferedImage[] etapasCarro;
 	private String[] nomImg = { "chasis.png", "chMotor.png", "chTransmision.png", "chMoTrans.png", "completo.png",
 	"carrocompleto.png" };
-	private Graphics graphics;	
-	private boolean estaFabricando = true;
+	private Graphics graphics;
 	private int[] segundosPorEstacion;
 	private Rutinas rutinas = new Rutinas();
 	private int numCarroFabricando = 0;
@@ -23,11 +22,6 @@ public class Fila extends Thread {
 	public static int noCarros = 0;
 	public static int[][] robots;
 	public static Semaforo[] semaforos;
-	public static int estacionVacia = 0;
-	public static int robotLibre = 1;
-	public static int robotOcupado = 2;
-	public static int robotTransmisionLibre = 3;
-	public static int robotTransmisionOcupado = 4;
 	public static Semaforo semNumCarros = new Semaforo(1);
 
 	public Fila(int id, Graphics g, int[][] robots, Semaforo[] semaforos, int[] segundosPorEstacion) {
