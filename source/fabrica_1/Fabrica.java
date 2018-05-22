@@ -15,12 +15,6 @@ import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class Fabrica extends JFrame implements ActionListener {
 
-	// Estatus Robots:
-	// 0 - no hay robot en estacion
-	// 1 - el robot esta disponible
-	// 2 - el robot esta ocupado
-	// 3 - el robot de transmision esta disponible
-	// 4 - el robot de transmision esta ocupado
 	int[][] robots;
 	Semaforo[] semaforos;
 	Rutinas rutinas = new Rutinas();
@@ -82,11 +76,9 @@ public class Fabrica extends JFrame implements ActionListener {
 
 	public void crearFilas() {
 		filas = new Fila[tamano];
-
 		for(int i = 0; i < filas.length; i++) {
 			filas[i] = new Fila(i,graphics,robots,semaforos,segundosPorEstacion);
 		}
-		//pintarRobots();
 		for(int i = 0; i < filas.length; i++) {
 			filas[i].start();
 		}
@@ -129,21 +121,6 @@ public class Fabrica extends JFrame implements ActionListener {
 			}
 		}
 	}
-
-	public void pintarRobots() {
-		BufferedImage imagenRobot = rutinas.obtenerImagen("./robot.png");
-		BufferedImage imagenRobotTrans = rutinas.obtenerImagen("./robot-trans.png");
-		for(int i = 0; i < robots.length; i++) {
-			for(int j = 0; j < robots[i].length; j++) {
-				if(robots[i][j] == 1) {
-					graphics.drawImage(imagenRobot, i*80, (j*80)+50, null);
-				} else if(robots[i][j] == 3) {
-					graphics.drawImage(imagenRobotTrans, i*80, (j*80)+50, null);
-				}
-			}
-		}
-	}
-
 	public void crearRobots() {
 		robots = new int[6][tamano];
 		int robotsEstacion = rutinas.nextInt(1,tamano);
@@ -167,13 +144,4 @@ public class Fabrica extends JFrame implements ActionListener {
 			}
 		}
 	}
-	
-	
-	
-//	public void detenerFilas() {
-//		for(int i = 0; i < filas.length; i++) {
-//			filas[i].setEstaFabricando(false);
-//		}
-//	}
-
 }
